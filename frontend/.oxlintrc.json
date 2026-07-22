@@ -1,0 +1,26 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": ["eslint", "typescript", "unicorn", "oxc", "vue"],
+    "env": {
+        "browser": true
+    },
+    "categories": {
+        "correctness": "error",
+        "suspicious": "warn",
+        "perf": "warn"
+    },
+    "ignorePatterns": ["node_modules/**", "dist/**", "dist-ssr/**", "coverage/**"],
+    "rules": {
+        "eqeqeq": "error",
+        "no-constructor-return": "error",
+        "no-duplicate-imports": "error",
+        "no-self-compare": "warn",
+        "no-unmodified-loop-condition": "warn",
+        "dot-notation": "error",
+        "no-var": "error",
+        "prefer-const": "warn",
+        "prefer-template": "warn",
+        "no-empty-function": "warn",
+        "no-console": "warn"
+    }
+}

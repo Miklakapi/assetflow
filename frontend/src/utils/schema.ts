@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 export class ContractValidationError extends Error {
     readonly issues: z.core.$ZodIssue[]
-    readonly source: string | null
     readonly receivedData: unknown
+    readonly source: string | null
 
     constructor(issues: z.core.$ZodIssue[], receivedData: unknown, source?: string) {
         const message = source ? `Invalid data contract: ${source}` : 'Invalid data contract.'
@@ -12,8 +12,8 @@ export class ContractValidationError extends Error {
 
         this.name = 'ContractValidationError'
         this.issues = issues
-        this.source = source ?? null
         this.receivedData = receivedData
+        this.source = source ?? null
     }
 }
 

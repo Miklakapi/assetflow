@@ -25,6 +25,7 @@
         "zod": "^4.4.3"
     },
     "devDependencies": {
+        "@faker-js/faker": "^10.5.0",
         "@miklakapi/prettier-config": "^1.1.0",
         "@tsconfig/node24": "^24.0.4",
         "@types/node": "^24.13.3",

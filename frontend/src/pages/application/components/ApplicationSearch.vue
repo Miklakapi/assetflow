@@ -35,7 +35,7 @@
                 </span>
 
                 <span class="application-search-result-path">
-                    {{ item.route }}
+                    {{ item.path }}
                 </span>
             </button>
 
@@ -49,14 +49,14 @@ import { Search } from '@lucide/vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { getMenu } from '@/domain/menu/api'
 import type { MenuItem } from '@/domain/menu/schema'
+import { useMenuStore } from '@/stores/menu'
 
 const router = useRouter()
+const menu = useMenuStore()
 
 const searchRef = ref<HTMLElement | null>(null)
 const inputRef = ref<HTMLInputElement | null>(null)
-const menuItems = ref<MenuItem[]>([])
 const query = ref('')
 const resultsOpened = ref(false)
 const selectedResultIndex = ref(0)
@@ -66,7 +66,7 @@ const shortcutLabel = computed(() => {
 })
 
 const searchableItems = computed(() => {
-    return flattenMenuItems(menuItems.value)
+    return flattenMenuItems(menu.items)
 })
 
 const filteredItems = computed(() => {
@@ -82,12 +82,6 @@ const filteredItems = computed(() => {
 const resultsVisible = computed(() => {
     return resultsOpened.value && (query.value.length > 0 || filteredItems.value.length > 0)
 })
-
-async function loadMenu(): Promise<void> {
-    const response = await getMenu()
-
-    menuItems.value = response.items
-}
 
 function flattenMenuItems(items: MenuItem[], parentLabels: string[] = []): Array<MenuItem & { path: string }> {
     return items.flatMap((item) => {
@@ -183,9 +177,9 @@ function closeOnOutsideClick(event: PointerEvent): void {
     resultsOpened.value = false
 }
 
-function fuzzyMatch(value: string, query: string): boolean {
+function fuzzyMatch(value: string, searchQuery: string): boolean {
     const normalizedValue = normalizeSearchValue(value)
-    const normalizedQuery = normalizeSearchValue(query)
+    const normalizedQuery = normalizeSearchValue(searchQuery)
 
     let queryIndex = 0
 
@@ -212,7 +206,7 @@ function normalizeSearchValue(value: string): string {
 }
 
 onMounted(() => {
-    loadMenu()
+    menu.loadMenu()
 
     document.addEventListener('keydown', handleKeyboardShortcut)
     document.addEventListener('pointerdown', closeOnOutsideClick)

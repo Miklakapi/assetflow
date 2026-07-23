@@ -1,13 +1,13 @@
 <template>
     <nav class="application-menu">
-        <div v-if="loading" class="application-menu-message">Loading...</div>
+        <div v-if="menu.isLoading" class="application-menu-message">Loading...</div>
 
-        <div v-else-if="errorMessage" class="application-menu-message application-menu-error">
-            {{ errorMessage }}
+        <div v-else-if="menu.error" class="application-menu-message application-menu-error">
+            {{ menu.error.message }}
         </div>
 
         <div v-else class="application-menu-sections">
-            <section v-for="item in menuItems" :key="item.id" class="application-menu-section">
+            <section v-for="item in menu.items" :key="item.id" class="application-menu-section">
                 <RouterLink
                     v-if="item.route"
                     :to="item.route"
@@ -60,11 +60,12 @@
 
 <script setup lang="ts">
 import { BookOpen, Box, CalendarDays, Circle, Package, ShoppingCart, type LucideIcon } from '@lucide/vue'
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import { getMenu } from '@/domain/menu/api'
-import type { MenuItem } from '@/domain/menu/schema'
+import { useMenuStore } from '@/stores/menu'
+
+const menu = useMenuStore()
 
 const props = defineProps<{
     expanded: boolean
@@ -83,24 +84,6 @@ const menuIcons: Record<string, LucideIcon> = {
     assets: Box,
 }
 
-const menuItems = ref<MenuItem[]>([])
-const loading = ref(true)
-const errorMessage = ref<string | null>(null)
-
-async function loadMenu(): Promise<void> {
-    try {
-        const response = await getMenu()
-
-        menuItems.value = response.items
-    } catch (error) {
-        console.error(error)
-
-        errorMessage.value = 'The menu could not be loaded.'
-    } finally {
-        loading.value = false
-    }
-}
-
 function openSection(sectionId: string): void {
     emit('openSection', sectionId)
 }
@@ -113,7 +96,7 @@ function getMenuIcon(icon: string | null): LucideIcon {
     return menuIcons[icon] ?? Circle
 }
 
-onMounted(loadMenu)
+onMounted(menu.loadMenu)
 </script>
 
 <style scoped>

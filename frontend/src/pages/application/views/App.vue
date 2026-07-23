@@ -48,7 +48,6 @@
 <script setup lang="ts">
 import { Bell, Settings, User } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { RouterView } from 'vue-router'
 
 import ApplicationMenu from '../components/ApplicationMenu.vue'
 

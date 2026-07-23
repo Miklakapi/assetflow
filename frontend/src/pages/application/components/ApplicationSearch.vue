@@ -22,20 +22,20 @@
 
         <div v-if="resultsVisible" class="application-search-results">
             <button
-                v-for="(item, index) in filteredItems"
-                :key="item.id"
+                v-for="(result, index) in filteredItems"
+                :key="result.item.id"
                 :class="{ 'application-search-result-selected': selectedResultIndex === index }"
                 class="application-search-result"
                 type="button"
                 @mouseenter="selectedResultIndex = index"
-                @click="openResult(item)"
+                @click="openResult(result.item)"
             >
                 <span class="application-search-result-label">
-                    {{ item.label }}
+                    {{ result.item.label }}
                 </span>
 
                 <span class="application-search-result-path">
-                    {{ item.path }}
+                    <FuzzyHighlight :value="result.value" :matched-indexes="result.matchedIndexes" />
                 </span>
             </button>
 
@@ -51,6 +51,8 @@ import { useRouter } from 'vue-router'
 
 import type { MenuItem } from '@/domain/menu/schema'
 import { useMenuStore } from '@/stores/menu'
+import { fuzzySearch } from '@/utils/fuzzy-search'
+import FuzzyHighlight from '@/components/FuzzyHighlight.vue'
 
 const router = useRouter()
 const menu = useMenuStore()
@@ -70,13 +72,10 @@ const searchableItems = computed(() => {
 })
 
 const filteredItems = computed(() => {
-    const normalizedQuery = query.value.trim()
-
-    if (!normalizedQuery) {
-        return searchableItems.value.slice(0, 8)
-    }
-
-    return searchableItems.value.filter((item) => fuzzyMatch(item.path, normalizedQuery)).slice(0, 8)
+    return fuzzySearch(searchableItems.value, query.value, {
+        getValue: (item) => item.path,
+        limit: 8,
+    })
 })
 
 const resultsVisible = computed(() => {
@@ -135,13 +134,13 @@ function selectPreviousResult(): void {
 }
 
 function openSelectedResult(): void {
-    const item = filteredItems.value[selectedResultIndex.value]
+    const result = filteredItems.value[selectedResultIndex.value]
 
-    if (!item) {
+    if (!result) {
         return
     }
 
-    openResult(item)
+    openResult(result.item)
 }
 
 function openResult(item: MenuItem): void {
@@ -175,34 +174,6 @@ function closeOnOutsideClick(event: PointerEvent): void {
     }
 
     resultsOpened.value = false
-}
-
-function fuzzyMatch(value: string, searchQuery: string): boolean {
-    const normalizedValue = normalizeSearchValue(value)
-    const normalizedQuery = normalizeSearchValue(searchQuery)
-
-    let queryIndex = 0
-
-    for (const character of normalizedValue) {
-        if (character === normalizedQuery[queryIndex]) {
-            queryIndex += 1
-        }
-
-        if (queryIndex === normalizedQuery.length) {
-            return true
-        }
-    }
-
-    return false
-}
-
-function normalizeSearchValue(value: string): string {
-    return value
-        .normalize('NFD')
-        .replace(/\p{Diacritic}/gu, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, ' ')
-        .trim()
 }
 
 onMounted(() => {

@@ -2,8 +2,8 @@
     <div class="application">
         <aside
             ref="sidebarRef"
-            :class="{ 'application-sidebar-expanded': sidebarExpanded }"
             class="application-sidebar"
+            :class="{ 'application-sidebar-expanded': sidebarExpanded }"
             @click="expandSidebar"
         >
             <div class="application-logo">
@@ -22,6 +22,8 @@
         <div class="application-main">
             <header class="application-header">
                 <div class="application-header-title">Asset management</div>
+
+                <ApplicationSearch />
 
                 <div class="application-header-actions">
                     <button class="application-header-button" type="button">
@@ -50,6 +52,7 @@ import { Bell, Settings, User } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 import ApplicationMenu from '../components/ApplicationMenu.vue'
+import ApplicationSearch from '../components/ApplicationSearch.vue'
 
 const sidebarRef = ref<HTMLElement | null>(null)
 const sidebarExpanded = ref(false)
@@ -150,11 +153,12 @@ onBeforeUnmount(() => {
 }
 
 .application-header {
-    display: flex;
+    display: grid;
     height: 52px;
     flex-shrink: 0;
+    grid-template-columns: minmax(140px, 1fr) auto minmax(140px, 1fr);
     align-items: center;
-    justify-content: space-between;
+    gap: 16px;
     padding: 0 18px;
     background: #ffffff;
 }
@@ -167,6 +171,7 @@ onBeforeUnmount(() => {
 .application-header-actions {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 4px;
 }
 
@@ -201,5 +206,17 @@ onBeforeUnmount(() => {
     padding: 16px 18px;
     border-top-left-radius: 16px;
     background: #f5f6f8;
+}
+
+@media (max-width: 760px) {
+    .application-header {
+        grid-template-columns: auto 1fr auto;
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    .application-header-title {
+        display: none;
+    }
 }
 </style>

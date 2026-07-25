@@ -17,6 +17,7 @@
                 draggable.style.value,
             ]"
             class="application-dialog"
+            @keydown.esc.capture="handleEscapeKeydown"
             @cancel="handleCancel"
             @click="handleBackdropClick"
             @close="handleNativeClose"
@@ -172,6 +173,15 @@ function handleKeyboard(event: KeyboardEvent): void {
     }
 
     focusTrap.handleKeydown(event)
+}
+
+function handleEscapeKeydown(event: KeyboardEvent): void {
+    if (closeOnEscape.value) {
+        return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
 }
 
 async function openDialog(): Promise<void> {

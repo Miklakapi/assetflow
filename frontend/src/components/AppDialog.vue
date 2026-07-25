@@ -241,7 +241,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .application-dialog {
-    display: grid;
     max-width: calc(100vw - 32px);
     max-height: calc(100dvh - 32px);
     grid-template-rows: auto minmax(0, 1fr) auto;
@@ -260,6 +259,10 @@ onBeforeUnmount(() => {
         overlay 180ms allow-discrete;
 }
 
+.application-dialog[open] {
+    display: grid;
+}
+
 .application-dialog::backdrop {
     background: color-mix(in srgb, var(--color-black) 32%, transparent);
     transition:
@@ -269,6 +272,7 @@ onBeforeUnmount(() => {
 }
 
 .application-dialog:not([open]) {
+    display: none;
     opacity: 0;
     scale: 0.97;
 }

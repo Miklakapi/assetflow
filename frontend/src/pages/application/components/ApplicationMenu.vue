@@ -109,13 +109,13 @@ onMounted(menu.loadMenu)
 
 .application-menu-message {
     padding: 12px 8px;
-    color: #6b7280;
+    color: var(--color-text-muted);
     font-size: 13px;
     white-space: nowrap;
 }
 
 .application-menu-error {
-    color: #b91c1c;
+    color: var(--color-error);
 }
 
 .application-menu-sections {
@@ -140,7 +140,7 @@ onMounted(menu.loadMenu)
     border: 0;
     border-radius: 7px;
     background: transparent;
-    color: #374151;
+    color: var(--color-text);
     font: inherit;
     text-align: left;
     text-decoration: none;
@@ -171,8 +171,8 @@ onMounted(menu.loadMenu)
 .application-menu-section-button:hover,
 .application-menu-link:hover,
 .application-menu-section-opened {
-    background: #f3f4f6;
-    color: #111827;
+    background: var(--color-surface-hover);
+    color: var(--color-text-strong);
 }
 
 .application-menu-children {
@@ -186,13 +186,13 @@ onMounted(menu.loadMenu)
     width: 154px;
     min-height: 30px;
     padding: 0 10px;
-    color: #6b7280;
+    color: var(--color-text-muted);
     font-size: 13px;
     white-space: nowrap;
 }
 
 .application-menu-link.router-link-active {
-    background: #eef2ff;
-    color: #4f46e5;
+    background: var(--color-surface-active);
+    color: var(--color-primary);
 }
 </style>

@@ -101,8 +101,8 @@ onBeforeUnmount(() => {
 .application {
     display: flex;
     min-height: 100vh;
-    background: #ffffff;
-    color: #1f2937;
+    background: var(--color-surface);
+    color: var(--color-text);
 }
 
 .application-sidebar {
@@ -111,7 +111,7 @@ onBeforeUnmount(() => {
     flex-shrink: 0;
     flex-direction: column;
     overflow: hidden;
-    background: #ffffff;
+    background: var(--color-surface);
     transition: width 160ms ease;
 }
 
@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
     min-width: 0;
     flex: 1;
     flex-direction: column;
-    background: #ffffff;
+    background: var(--color-surface);
 }
 
 .application-header {
@@ -160,11 +160,11 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 16px;
     padding: 0 18px;
-    background: #ffffff;
+    background: var(--color-surface);
 }
 
 .application-header-title {
-    color: #6b7280;
+    color: var(--color-text-muted);
     font-size: 13px;
 }
 
@@ -186,18 +186,18 @@ onBeforeUnmount(() => {
     border: 0;
     border-radius: 7px;
     background: transparent;
-    color: #4b5563;
+    color: var(--color-text-muted);
     cursor: pointer;
 }
 
 .application-header-button:hover,
 .application-user-button:hover {
-    background: #f3f4f6;
-    color: #111827;
+    background: var(--color-surface-hover);
+    color: var(--color-text-strong);
 }
 
 .application-user-button {
-    background: #f3f4f6;
+    background: var(--color-surface-hover);
 }
 
 .application-content {
@@ -205,7 +205,7 @@ onBeforeUnmount(() => {
     flex: 1;
     padding: 16px 18px;
     border-top-left-radius: 16px;
-    background: #f5f6f8;
+    background: var(--color-background);
 }
 
 @media (max-width: 760px) {

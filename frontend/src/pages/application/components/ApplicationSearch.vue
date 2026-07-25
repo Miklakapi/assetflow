@@ -49,10 +49,10 @@ import { Search } from '@lucide/vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import FuzzyHighlight from '@/components/FuzzyHighlight.vue'
 import type { MenuItem } from '@/domain/menu/schema'
 import { useMenuStore } from '@/stores/menu'
 import { fuzzySearch } from '@/utils/fuzzy-search'
-import FuzzyHighlight from '@/components/FuzzyHighlight.vue'
 
 const router = useRouter()
 const menu = useMenuStore()
@@ -201,7 +201,7 @@ onBeforeUnmount(() => {
 .application-search-icon {
     position: absolute;
     left: 10px;
-    color: #9ca3af;
+    color: var(--color-text-subtle);
     pointer-events: none;
 }
 
@@ -209,32 +209,32 @@ onBeforeUnmount(() => {
     width: 100%;
     height: 32px;
     padding: 0 58px 0 34px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     outline: none;
-    background: #f9fafb;
-    color: #1f2937;
+    background: var(--color-surface-subtle);
+    color: var(--color-text);
     font-size: 13px;
 }
 
 .application-search-input:focus {
-    border-color: #c7d2fe;
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgb(99 102 241 / 10%);
+    border-color: var(--color-border-focus);
+    background: var(--color-surface);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .application-search-input::placeholder {
-    color: #9ca3af;
+    color: var(--color-text-subtle);
 }
 
 .application-search-shortcut {
     position: absolute;
     right: 7px;
     padding: 1px 5px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--color-border-strong);
     border-radius: 4px;
-    background: #ffffff;
-    color: #6b7280;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
     font-family: inherit;
     font-size: 10px;
     line-height: 17px;
@@ -248,10 +248,10 @@ onBeforeUnmount(() => {
     left: 0;
     width: 100%;
     padding: 5px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
     border-radius: 9px;
-    background: #ffffff;
-    box-shadow: 0 12px 30px rgb(15 23 42 / 12%);
+    background: var(--color-surface);
+    box-shadow: 0 12px 30px rgb(var(--color-shadow) / 12%);
 }
 
 .application-search-result {
@@ -265,14 +265,14 @@ onBeforeUnmount(() => {
     border: 0;
     border-radius: 6px;
     background: transparent;
-    color: #374151;
+    color: var(--color-text);
     text-align: left;
     cursor: pointer;
 }
 
 .application-search-result:hover,
 .application-search-result-selected {
-    background: #f3f4f6;
+    background: var(--color-surface-hover);
 }
 
 .application-search-result-label {
@@ -285,7 +285,7 @@ onBeforeUnmount(() => {
 
 .application-search-result-path {
     overflow: hidden;
-    color: #9ca3af;
+    color: var(--color-text-subtle);
     font-size: 11px;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -293,7 +293,7 @@ onBeforeUnmount(() => {
 
 .application-search-empty {
     padding: 12px 9px;
-    color: #9ca3af;
+    color: var(--color-text-subtle);
     font-size: 13px;
     text-align: center;
 }

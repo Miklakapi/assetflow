@@ -65,15 +65,18 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
     gap: 10px;
     overflow: hidden;
     padding: 12px 11px;
-    border: 1px solid rgb(var(--notification-color) / 18%);
+    border: 1px solid color-mix(in srgb, var(--notification-color) 18%, transparent);
     border-radius: 16px;
     background:
-        linear-gradient(rgb(var(--notification-color) / 17%), rgb(var(--notification-color) / 7%)),
-        rgb(255 255 255 / 65%);
+        linear-gradient(
+            color-mix(in srgb, var(--notification-color) 17%, transparent),
+            color-mix(in srgb, var(--notification-color) 7%, transparent)
+        ),
+        color-mix(in srgb, var(--color-surface) 65%, transparent);
     box-shadow:
-        0 14px 36px rgb(15 23 42 / 14%),
-        inset 0 1px 0 rgb(255 255 255 / 82%);
-    color: rgb(var(--notification-color));
+        0 14px 36px rgb(var(--color-shadow) / 14%),
+        inset 0 1px 0 color-mix(in srgb, var(--color-surface) 82%, transparent);
+    color: var(--notification-color);
     backdrop-filter: blur(4px) saturate(115%);
     -webkit-backdrop-filter: blur(4px) saturate(115%);
     pointer-events: auto;
@@ -104,9 +107,9 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
     height: 36px;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgb(var(--notification-color) / 24%);
+    border: 1px solid color-mix(in srgb, var(--notification-color) 24%, transparent);
     border-radius: 11px;
-    background: rgb(var(--notification-color) / 8%);
+    background: color-mix(in srgb, var(--notification-color) 8%, transparent);
 }
 
 .notification-content {
@@ -116,7 +119,7 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
 
 .notification-title {
     overflow: hidden;
-    color: #0f172a;
+    color: var(--color-text-strong);
     font-size: 14px;
     font-weight: 700;
     line-height: 19px;
@@ -126,7 +129,7 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
 
 .notification-message {
     margin-top: 2px;
-    color: #334155;
+    color: var(--color-text);
     font-size: 12px;
     font-weight: 500;
     line-height: 17px;
@@ -147,28 +150,28 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
 }
 
 .notification-close:hover {
-    background: rgb(var(--notification-color) / 8%);
+    background: color-mix(in srgb, var(--notification-color) 8%, transparent);
 }
 
 .notification-close:focus-visible {
-    outline: 2px solid rgb(var(--notification-color) / 40%);
+    outline: 2px solid color-mix(in srgb, var(--notification-color) 40%, transparent);
     outline-offset: 2px;
 }
 
 .notification-success {
-    --notification-color: 22 163 74;
+    --notification-color: var(--color-success);
 }
 
 .notification-info {
-    --notification-color: 37 99 235;
+    --notification-color: var(--color-info);
 }
 
 .notification-warning {
-    --notification-color: 217 119 6;
+    --notification-color: var(--color-warning);
 }
 
 .notification-error {
-    --notification-color: 220 38 38;
+    --notification-color: var(--color-error);
 }
 
 .notification-enter-active,
@@ -188,8 +191,11 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .notification {
         background:
-            linear-gradient(rgb(var(--notification-color) / 6%), rgb(var(--notification-color) / 6%)),
-            rgb(248 250 252 / 94%);
+            linear-gradient(
+                color-mix(in srgb, var(--notification-color) 6%, transparent),
+                color-mix(in srgb, var(--notification-color) 6%, transparent)
+            ),
+            color-mix(in srgb, var(--color-surface-subtle) 94%, transparent);
     }
 }
 

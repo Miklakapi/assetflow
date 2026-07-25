@@ -27,7 +27,7 @@ const matchedIndexesSet = computed(() => {
 
 <style scoped>
 strong {
-    color: #111827;
+    color: var(--color-text-strong);
     font-weight: 700;
 }
 </style>

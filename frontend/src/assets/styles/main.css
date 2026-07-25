@@ -1,3 +1,5 @@
+@import './variables.css';
+
 * {
     box-sizing: border-box;
 }
@@ -11,8 +13,8 @@ body,
 }
 
 body {
-    background: #f5f6f8;
-    color: #1f2937;
+    background: var(--color-background);
+    color: var(--color-text);
     font-family:
         Inter,
         ui-sans-serif,
@@ -23,6 +25,10 @@ body {
         sans-serif;
     font-size: 14px;
     line-height: 1.5;
+}
+
+::selection {
+    background: var(--color-selection);
 }
 
 button,

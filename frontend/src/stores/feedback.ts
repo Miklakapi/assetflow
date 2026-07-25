@@ -7,19 +7,23 @@ export interface FeedbackItem {
     id: number
     type: NotificationType
     message: string
+    x: number
+    y: number
 }
 
 export interface FeedbackOptions {
     duration?: number
 }
 
-const defaultDuration = 1_600
+const defaultDuration = 600
 
 export const useFeedbackStore = defineStore('feedback', () => {
     const item = ref<FeedbackItem | null>(null)
 
     let nextId = 1
     let feedbackTimeout: number | null = null
+    let pointerX = window.innerWidth / 2
+    let pointerY = 24
 
     function success(message: string, options: FeedbackOptions = {}): void {
         show('success', message, options)
@@ -38,12 +42,14 @@ export const useFeedbackStore = defineStore('feedback', () => {
     }
 
     function show(type: NotificationType, message: string, options: FeedbackOptions = {}): void {
-        clearTimeout()
+        clearFeedbackTimeout()
 
         item.value = {
             id: nextId,
             type,
             message,
+            x: pointerX,
+            y: pointerY,
         }
 
         nextId += 1
@@ -53,12 +59,17 @@ export const useFeedbackStore = defineStore('feedback', () => {
         }, options.duration ?? defaultDuration)
     }
 
+    function setPointerPosition(x: number, y: number): void {
+        pointerX = x
+        pointerY = y
+    }
+
     function clear(): void {
-        clearTimeout()
+        clearFeedbackTimeout()
         item.value = null
     }
 
-    function clearTimeout(): void {
+    function clearFeedbackTimeout(): void {
         if (feedbackTimeout === null) {
             return
         }
@@ -73,6 +84,7 @@ export const useFeedbackStore = defineStore('feedback', () => {
         info,
         warning,
         error,
+        setPointerPosition,
         clear,
     }
 })

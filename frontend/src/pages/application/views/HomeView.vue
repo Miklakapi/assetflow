@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <ApplicationDialog v-model:opened="dialogOpened" type="dialog" title="Product preview">
+        <AppDialog v-model:opened="dialogOpened" type="dialog" title="Product preview">
             <div class="popup-example">
                 <p class="popup-example-text">
                     This dialog can be closed with Escape, the close button or by clicking the backdrop. It can also be
@@ -81,9 +81,9 @@
                     Close
                 </button>
             </template>
-        </ApplicationDialog>
+        </AppDialog>
 
-        <ApplicationDialog v-model:opened="modalOpened" type="modal" title="Edit product">
+        <AppDialog v-model:opened="modalOpened" type="modal" title="Edit product">
             <div class="popup-example">
                 <p class="popup-example-text">
                     Clicking the backdrop does not close this modal. Escape and the close button remain available.
@@ -105,9 +105,9 @@
                     Save
                 </button>
             </template>
-        </ApplicationDialog>
+        </AppDialog>
 
-        <ApplicationDialog v-model:opened="blockingDialogOpened" type="blocking" title="Unsaved changes" width="480px">
+        <AppDialog v-model:opened="blockingDialogOpened" type="blocking" title="Unsaved changes" width="480px">
             <div class="popup-example">
                 <p class="popup-example-text">
                     This dialog cannot be closed by clicking the backdrop, pressing Escape or using a close button. One
@@ -124,15 +124,9 @@
                     Leave without saving
                 </button>
             </template>
-        </ApplicationDialog>
+        </AppDialog>
 
-        <ApplicationDialog
-            v-model:opened="sizedDialogOpened"
-            type="modal"
-            title="Large dialog"
-            width="820px"
-            height="560px"
-        >
+        <AppDialog v-model:opened="sizedDialogOpened" type="modal" title="Large dialog" width="820px" height="560px">
             <div class="popup-example">
                 <p class="popup-example-text">
                     This dialog has an explicitly configured width and height. The content area should scroll when its
@@ -147,9 +141,9 @@
                     Close
                 </button>
             </template>
-        </ApplicationDialog>
+        </AppDialog>
 
-        <ApplicationDialog
+        <AppDialog
             v-model:opened="positionedDialogOpened"
             type="modal"
             title="Top positioned dialog"
@@ -169,9 +163,9 @@
                     Done
                 </button>
             </template>
-        </ApplicationDialog>
+        </AppDialog>
 
-        <ApplicationDialog v-model:opened="errorDialogOpened" type="modal" title="Save product" width="680px">
+        <AppDialog v-model:opened="errorDialogOpened" type="modal" title="Save product" width="680px">
             <template #error>
                 <div class="popup-error">
                     <CircleAlert :size="20" :stroke-width="2" />
@@ -214,7 +208,7 @@
 
                 <button class="popup-button popup-button-primary" type="button">Try again</button>
             </template>
-        </ApplicationDialog>
+        </AppDialog>
     </section>
 </template>
 
@@ -222,7 +216,7 @@
 import { CircleAlert, Copy } from '@lucide/vue'
 import { ref } from 'vue'
 
-import ApplicationDialog from '@/components/ApplicationDialog.vue'
+import AppDialog from '@/components/AppDialog.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 
 const notifications = useNotificationsStore()

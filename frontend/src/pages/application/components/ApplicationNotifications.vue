@@ -13,7 +13,7 @@
             </span>
         </button>
 
-        <ApplicationSidePanel v-model:opened="panelOpened" width="440px">
+        <AppSidePanel v-model:opened="panelOpened" width="440px">
             <div class="application-notifications-panel">
                 <header class="application-notifications-header">
                     <div>
@@ -144,7 +144,7 @@
                     <span>No notifications</span>
                 </div>
             </div>
-        </ApplicationSidePanel>
+        </AppSidePanel>
     </div>
 </template>
 
@@ -167,7 +167,7 @@ import {
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import ApplicationSidePanel from '@/components/ApplicationSidePanel.vue'
+import AppSidePanel from '@/components/AppSidePanel.vue'
 import { useNotificationsStore, type NotificationItem, type NotificationType } from '@/stores/notifications'
 
 const notifications = useNotificationsStore()

@@ -1,12 +1,6 @@
 <template>
     <Teleport to="body">
-        <TransitionGroup
-            class="notifications"
-            name="notification"
-            tag="div"
-            aria-label="Notifications"
-            aria-live="polite"
-        >
+        <TransitionGroup class="notifications" name="notification" tag="div">
             <article
                 v-for="toast in notifications.toasts"
                 :key="toast.id"
@@ -27,12 +21,7 @@
                     </div>
                 </div>
 
-                <button
-                    class="notification-close"
-                    type="button"
-                    aria-label="Close notification"
-                    @click="notifications.removeToast(toast.id)"
-                >
+                <button class="notification-close" type="button" @click="notifications.removeToast(toast.id)">
                     <X :size="17" />
                 </button>
             </article>
@@ -76,9 +65,11 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
     gap: 10px;
     overflow: hidden;
     padding: 12px 11px;
-    border: 1px solid rgb(255 255 255 / 68%);
+    border: 1px solid rgb(var(--notification-color) / 18%);
     border-radius: 16px;
-    background: rgb(255 255 255 / 65%);
+    background:
+        linear-gradient(rgb(var(--notification-color) / 17%), rgb(var(--notification-color) / 7%)),
+        rgb(255 255 255 / 65%);
     box-shadow:
         0 14px 36px rgb(15 23 42 / 14%),
         inset 0 1px 0 rgb(255 255 255 / 82%);
@@ -196,7 +187,9 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .notification {
-        background: rgb(248 250 252 / 94%);
+        background:
+            linear-gradient(rgb(var(--notification-color) / 6%), rgb(var(--notification-color) / 6%)),
+            rgb(248 250 252 / 94%);
     }
 }
 

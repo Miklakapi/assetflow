@@ -167,24 +167,11 @@
 
         <AppDialog v-model:opened="errorDialogOpened" type="modal" title="Save product" width="680px">
             <template #error>
-                <div class="popup-error">
-                    <CircleAlert :size="20" :stroke-width="2" />
-
-                    <div class="popup-error-content">
-                        <div class="popup-error-title">The product could not be saved</div>
-
-                        <div class="popup-error-message">
-                            The server rejected the request because the selected supplier is inactive and two required
-                            asset fields are missing. Correct the highlighted values and try again.
-                        </div>
-                    </div>
-
-                    <button class="popup-error-copy" type="button">
-                        <Copy :size="15" />
-
-                        Copy
-                    </button>
-                </div>
+                <AppError
+                    title="The product could not be saved"
+                    message="The server rejected the request because the selected supplier is inactive and two required asset fields are missing. Correct the highlighted values and try again."
+                    details="POST /api/products returned HTTP 422. Validation failed for supplierId, primaryAssetId and previewAssetId."
+                />
             </template>
 
             <div class="popup-example">
@@ -213,10 +200,10 @@
 </template>
 
 <script setup lang="ts">
-import { CircleAlert, Copy } from '@lucide/vue'
 import { ref } from 'vue'
 
 import AppDialog from '@/components/AppDialog.vue'
+import AppError from '@/components/AppError.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 
 const notifications = useNotificationsStore()
@@ -458,53 +445,5 @@ function showSavedLongError(): void {
 
 .popup-button-secondary:hover {
     background: var(--color-surface-hover);
-}
-
-.popup-error {
-    display: grid;
-    grid-template-columns: 24px minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 10px;
-    padding: 12px;
-    border: 1px solid color-mix(in srgb, var(--color-error) 24%, transparent);
-    border-radius: 10px;
-    background: color-mix(in srgb, var(--color-error) 8%, transparent);
-    color: var(--color-error);
-}
-
-.popup-error-content {
-    min-width: 0;
-}
-
-.popup-error-title {
-    color: var(--color-text-strong);
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.popup-error-message {
-    margin-top: 3px;
-    color: var(--color-text);
-    font-size: 12px;
-    line-height: 18px;
-}
-
-.popup-error-copy {
-    display: flex;
-    min-height: 30px;
-    align-items: center;
-    gap: 4px;
-    padding: 0 8px;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--color-error);
-    font-size: 11px;
-    font-weight: 650;
-    cursor: pointer;
-}
-
-.popup-error-copy:hover {
-    background: color-mix(in srgb, var(--color-error) 9%, transparent);
 }
 </style>

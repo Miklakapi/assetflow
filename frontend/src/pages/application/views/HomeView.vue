@@ -13,6 +13,8 @@
                 <button class="home-button home-button-warning" type="button" @click="showWarning">Warning</button>
 
                 <button class="home-button home-button-error" type="button" @click="showError">Error</button>
+
+                <button class="home-button home-button-error" type="button" @click="showLongError">Long error</button>
             </div>
         </div>
 
@@ -31,6 +33,10 @@
                 </button>
 
                 <button class="home-button home-button-error" type="button" @click="showSavedError">Saved error</button>
+
+                <button class="home-button home-button-error" type="button" @click="showSavedLongError">
+                    Saved long error
+                </button>
             </div>
         </div>
     </section>
@@ -65,6 +71,14 @@ function showError(): void {
     })
 }
 
+function showLongError(): void {
+    notifications.error('The order synchronization request could not be completed successfully', {
+        message:
+            'The external system returned an unexpected response while synchronizing the order. Some related assets, reservation dates, assigned users and pricing information may not have been updated. Review the synchronization logs and try again after verifying the external service connection.',
+        duration: 12_000,
+    })
+}
+
 function showSavedSuccess(): void {
     notifications.success('Import completed', {
         message: '128 assets were imported successfully.',
@@ -92,6 +106,16 @@ function showSavedWarning(): void {
 function showSavedError(): void {
     notifications.error('Order synchronization failed', {
         message: 'The order could not be synchronized with the external system.',
+        save: true,
+        route: '/orders',
+    })
+}
+
+function showSavedLongError(): void {
+    notifications.error('Order synchronization failed because several related records could not be processed', {
+        message:
+            'The external system rejected the synchronization request because some assets referenced by the order no longer exist, several reservation dates overlap with existing reservations and one assigned user does not have permission to access the selected warehouse. Open the order to review all validation errors before attempting synchronization again.',
+        duration: 12_000,
         save: true,
         route: '/orders',
     })

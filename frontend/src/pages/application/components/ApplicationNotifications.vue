@@ -25,11 +25,20 @@
                     <div class="application-notifications-header-actions">
                         <button
                             v-if="notifications.unreadCount"
-                            class="application-notifications-read-all"
+                            class="application-notifications-header-button"
                             type="button"
                             @click="notifications.markAllAsRead"
                         >
                             Mark all as read
+                        </button>
+
+                        <button
+                            v-if="notifications.items.length"
+                            class="application-notifications-header-button application-notifications-clear"
+                            type="button"
+                            @click="clearNotifications"
+                        >
+                            Clear all
                         </button>
 
                         <button class="application-notifications-close" type="button" @click="closePanel">
@@ -42,7 +51,10 @@
                     <article
                         v-for="notification in notifications.items"
                         :key="notification.id"
-                        :class="{ 'application-notification-unread': !notification.isRead }"
+                        :class="{
+                            'application-notification-unread': !notification.isRead,
+                            'application-notification-expanded': isNotificationExpanded(notification.id),
+                        }"
                         class="application-notification"
                     >
                         <button
@@ -76,24 +88,53 @@
                             <span v-if="!notification.isRead" class="application-notification-indicator"></span>
                         </button>
 
-                        <RouterLink
-                            v-if="notification.route"
-                            :to="notification.route"
-                            class="application-notification-open"
-                            @click="handleNotificationLinkClick($event, notification.id)"
-                        >
-                            Open
-
-                            <ArrowRight :size="14" />
-                        </RouterLink>
-
                         <button
                             class="application-notification-remove"
                             type="button"
-                            @click="notifications.removeNotification(notification.id)"
+                            @click="removeNotification(notification.id)"
                         >
                             <X :size="15" />
                         </button>
+
+                        <div class="application-notification-actions">
+                            <button
+                                v-if="hasExpandableContent(notification)"
+                                class="application-notification-action"
+                                type="button"
+                                @click="toggleNotificationDetails(notification.id)"
+                            >
+                                <ChevronUp v-if="isNotificationExpanded(notification.id)" :size="14" />
+
+                                <ChevronDown v-else :size="14" />
+
+                                {{ isNotificationExpanded(notification.id) ? 'Hide details' : 'Show details' }}
+                            </button>
+
+                            <span class="application-notification-actions-spacer"></span>
+
+                            <button
+                                class="application-notification-action"
+                                type="button"
+                                @click="copyNotification(notification)"
+                            >
+                                <Check v-if="copiedNotificationId === notification.id" :size="14" />
+
+                                <Copy v-else :size="14" />
+
+                                {{ copiedNotificationId === notification.id ? 'Copied' : 'Copy' }}
+                            </button>
+
+                            <RouterLink
+                                v-if="notification.route"
+                                :to="notification.route"
+                                class="application-notification-action application-notification-open"
+                                @click="handleNotificationLinkClick($event, notification.id)"
+                            >
+                                Open
+
+                                <ArrowRight :size="14" />
+                            </RouterLink>
+                        </div>
                     </article>
                 </div>
 
@@ -112,22 +153,28 @@ import {
     ArrowRight,
     Bell,
     BellOff,
+    Check,
     CheckCircle2,
+    ChevronDown,
+    ChevronUp,
     CircleAlert,
+    Copy,
     Info,
     TriangleAlert,
     X,
     type LucideIcon,
 } from '@lucide/vue'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import ApplicationSidePanel from '@/components/ApplicationSidePanel.vue'
-import { useNotificationsStore, type NotificationType } from '@/stores/notifications'
+import { useNotificationsStore, type NotificationItem, type NotificationType } from '@/stores/notifications'
 
 const notifications = useNotificationsStore()
 
 const panelOpened = ref(false)
+const expandedNotificationIds = ref<number[]>([])
+const copiedNotificationId = ref<number | null>(null)
 
 const notificationIcons: Record<NotificationType, LucideIcon> = {
     success: CheckCircle2,
@@ -140,12 +187,101 @@ const formattedUnreadCount = computed(() => {
     return notifications.unreadCount > 99 ? '99+' : notifications.unreadCount
 })
 
+let copiedNotificationTimeout: number | null = null
+
 function togglePanel(): void {
-    panelOpened.value = !panelOpened.value
+    const shouldOpen = !panelOpened.value
+
+    if (shouldOpen) {
+        notifications.clearToasts()
+    }
+
+    panelOpened.value = shouldOpen
 }
 
 function closePanel(): void {
     panelOpened.value = false
+}
+
+function hasExpandableContent(notification: NotificationItem): boolean {
+    return notification.title.length > 48 || (notification.message?.length ?? 0) > 100
+}
+
+function isNotificationExpanded(id: number): boolean {
+    return expandedNotificationIds.value.includes(id)
+}
+
+function toggleNotificationDetails(id: number): void {
+    if (isNotificationExpanded(id)) {
+        expandedNotificationIds.value = expandedNotificationIds.value.filter((notificationId) => notificationId !== id)
+
+        return
+    }
+
+    expandedNotificationIds.value.push(id)
+}
+
+function removeNotification(id: number): void {
+    expandedNotificationIds.value = expandedNotificationIds.value.filter((notificationId) => notificationId !== id)
+
+    if (copiedNotificationId.value === id) {
+        copiedNotificationId.value = null
+    }
+
+    notifications.removeNotification(id)
+}
+
+function clearNotifications(): void {
+    expandedNotificationIds.value = []
+    copiedNotificationId.value = null
+
+    notifications.clearNotifications()
+}
+
+async function copyNotification(notification: NotificationItem): Promise<void> {
+    const content = formatNotificationForClipboard(notification)
+
+    await copyText(content)
+
+    copiedNotificationId.value = notification.id
+
+    if (copiedNotificationTimeout !== null) {
+        window.clearTimeout(copiedNotificationTimeout)
+    }
+
+    copiedNotificationTimeout = window.setTimeout(() => {
+        copiedNotificationId.value = null
+        copiedNotificationTimeout = null
+    }, 1_600)
+}
+
+function formatNotificationForClipboard(notification: NotificationItem): string {
+    const content = [`[${notification.type.toUpperCase()}] ${notification.title}`]
+
+    if (notification.message) {
+        content.push('', notification.message)
+    }
+
+    return content.join('\n')
+}
+
+async function copyText(value: string): Promise<void> {
+    if (navigator.clipboard) {
+        await navigator.clipboard.writeText(value)
+
+        return
+    }
+
+    const textarea = document.createElement('textarea')
+
+    textarea.value = value
+    textarea.style.position = 'fixed'
+    textarea.style.opacity = '0'
+
+    document.body.append(textarea)
+    textarea.select()
+    document.execCommand('copy')
+    textarea.remove()
 }
 
 function handleNotificationLinkClick(event: MouseEvent, id: number): void {
@@ -163,6 +299,12 @@ function formatCreatedAt(createdAt: string): string {
         minute: '2-digit',
     }).format(new Date(createdAt))
 }
+
+onBeforeUnmount(() => {
+    if (copiedNotificationTimeout !== null) {
+        window.clearTimeout(copiedNotificationTimeout)
+    }
+})
 </script>
 
 <style scoped>
@@ -243,12 +385,12 @@ function formatCreatedAt(createdAt: string): string {
 .application-notifications-header-actions {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
-.application-notifications-read-all {
+.application-notifications-header-button {
     min-height: 30px;
-    padding: 0 8px;
+    padding: 0 7px;
     border: 0;
     border-radius: 6px;
     background: transparent;
@@ -258,8 +400,16 @@ function formatCreatedAt(createdAt: string): string {
     cursor: pointer;
 }
 
-.application-notifications-read-all:hover {
+.application-notifications-header-button:hover {
     background: var(--color-surface-active);
+}
+
+.application-notifications-clear {
+    color: var(--color-error);
+}
+
+.application-notifications-clear:hover {
+    background: color-mix(in srgb, var(--color-error) 8%, transparent);
 }
 
 .application-notifications-close {
@@ -290,10 +440,12 @@ function formatCreatedAt(createdAt: string): string {
 .application-notification {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px 4px 6px;
+    grid-template-columns: minmax(0, 1fr) 30px;
+    grid-template-areas:
+        'content remove'
+        'actions actions';
+    align-items: start;
+    padding: 4px 10px 5px 6px;
     border-bottom: 1px solid var(--color-border);
     background: var(--color-surface);
 }
@@ -309,10 +461,11 @@ function formatCreatedAt(createdAt: string): string {
 .application-notification-read {
     display: grid;
     min-width: 0;
+    grid-area: content;
     grid-template-columns: 40px minmax(0, 1fr) 8px;
     align-items: start;
     gap: 10px;
-    padding: 10px 6px 10px 10px;
+    padding: 10px 6px 6px 10px;
     border: 0;
     border-radius: 8px;
     background: transparent;
@@ -392,6 +545,19 @@ function formatCreatedAt(createdAt: string): string {
     -webkit-line-clamp: 2;
 }
 
+.application-notification-expanded .application-notification-title {
+    overflow: visible;
+    text-overflow: initial;
+    white-space: normal;
+}
+
+.application-notification-expanded .application-notification-message {
+    display: block;
+    overflow: visible;
+    line-clamp: initial;
+    -webkit-line-clamp: initial;
+}
+
 .application-notification-indicator {
     width: 7px;
     height: 7px;
@@ -400,29 +566,14 @@ function formatCreatedAt(createdAt: string): string {
     background: var(--color-primary);
 }
 
-.application-notification-open {
-    display: flex;
-    height: 30px;
-    align-items: center;
-    gap: 3px;
-    padding: 0 8px;
-    border-radius: 6px;
-    color: var(--color-primary);
-    font-size: 11px;
-    font-weight: 650;
-    text-decoration: none;
-}
-
-.application-notification-open:hover {
-    background: var(--color-surface-active);
-}
-
 .application-notification-remove {
     display: flex;
+    grid-area: remove;
     width: 30px;
     height: 30px;
     align-items: center;
     justify-content: center;
+    margin-top: 9px;
     padding: 0;
     border: 0;
     border-radius: 6px;
@@ -434,6 +585,44 @@ function formatCreatedAt(createdAt: string): string {
 .application-notification-remove:hover {
     background: color-mix(in srgb, var(--color-error) 8%, transparent);
     color: var(--color-error);
+}
+
+.application-notification-actions {
+    display: flex;
+    min-width: 0;
+    grid-area: actions;
+    align-items: center;
+    gap: 4px;
+    margin: 0 0 2px 60px;
+}
+
+.application-notification-actions-spacer {
+    flex: 1;
+}
+
+.application-notification-action {
+    display: flex;
+    min-height: 28px;
+    align-items: center;
+    gap: 4px;
+    padding: 0 7px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-primary);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.application-notification-action:hover {
+    background: var(--color-surface-active);
+}
+
+.application-notification-open {
+    font-weight: 650;
 }
 
 .application-notifications-empty {

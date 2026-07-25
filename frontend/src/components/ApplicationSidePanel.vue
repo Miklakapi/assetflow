@@ -11,11 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-import { useApplicationUiStore } from '@/stores/application-ui'
-
-const applicationUi = useApplicationUiStore()
+import { useFocusTrap } from '@/composables/useFocusTrap'
+import { useModalLayer } from '@/composables/useModalLayer'
 
 const props = withDefaults(
     defineProps<{
@@ -32,78 +31,15 @@ const opened = defineModel<boolean>('opened', {
 
 const panelRef = ref<HTMLElement | null>(null)
 
-let applicationElement: HTMLElement | null = null
-let previouslyFocusedElement: HTMLElement | null = null
-let previousBodyOverflow = ''
-let applicationWasInert = false
-let modalLayerRegistered = false
-let modalLayerPosition = 0
-
-const focusableElementSelector = [
-    'a[href]',
-    'button:not([disabled])',
-    'input:not([disabled])',
-    'select:not([disabled])',
-    'textarea:not([disabled])',
-    '[tabindex]:not([tabindex="-1"])',
-].join(',')
+const focusTrap = useFocusTrap(panelRef)
+const modalLayer = useModalLayer()
 
 function close(): void {
     opened.value = false
 }
 
-function getFocusableElements(): HTMLElement[] {
-    if (!panelRef.value) {
-        return []
-    }
-
-    return Array.from(panelRef.value.querySelectorAll<HTMLElement>(focusableElementSelector)).filter(
-        (element) => element.getClientRects().length > 0,
-    )
-}
-
-function focusPanel(): void {
-    const firstFocusableElement = getFocusableElements()[0]
-
-    if (firstFocusableElement) {
-        firstFocusableElement.focus()
-
-        return
-    }
-
-    panelRef.value?.focus()
-}
-
-function trapFocus(event: KeyboardEvent): void {
-    const focusableElements = getFocusableElements()
-    const firstFocusableElement = focusableElements[0]
-    const lastFocusableElement = focusableElements.at(-1)
-    const activeElement = document.activeElement
-
-    if (!firstFocusableElement || !lastFocusableElement) {
-        event.preventDefault()
-        panelRef.value?.focus()
-
-        return
-    }
-
-    if (event.shiftKey) {
-        if (activeElement === firstFocusableElement || !panelRef.value?.contains(activeElement)) {
-            event.preventDefault()
-            lastFocusableElement.focus()
-        }
-
-        return
-    }
-
-    if (activeElement === lastFocusableElement || !panelRef.value?.contains(activeElement)) {
-        event.preventDefault()
-        firstFocusableElement.focus()
-    }
-}
-
 function handleKeyboard(event: KeyboardEvent): void {
-    if (!opened.value || applicationUi.activeModalLayers !== modalLayerPosition) {
+    if (!opened.value || !modalLayer.isTopLayer.value) {
         return
     }
 
@@ -114,89 +50,21 @@ function handleKeyboard(event: KeyboardEvent): void {
         return
     }
 
-    if (event.key === 'Tab') {
-        trapFocus(event)
-    }
-}
-
-function lockApplication(): void {
-    applicationElement = document.querySelector<HTMLElement>('#app')
-    applicationWasInert = applicationElement?.inert ?? false
-
-    if (applicationElement) {
-        applicationElement.inert = true
-    }
-}
-
-function unlockApplication(): void {
-    if (applicationElement) {
-        applicationElement.inert = applicationWasInert
-    }
-
-    applicationElement = null
-}
-
-function lockBodyScroll(): void {
-    previousBodyOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-}
-
-function unlockBodyScroll(): void {
-    document.body.style.overflow = previousBodyOverflow
-}
-
-function registerModalLayer(): void {
-    if (modalLayerRegistered) {
-        return
-    }
-
-    previouslyFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null
-
-    lockApplication()
-    lockBodyScroll()
-
-    applicationUi.openModalLayer()
-
-    modalLayerPosition = applicationUi.activeModalLayers
-    modalLayerRegistered = true
-
-    nextTick(focusPanel)
-}
-
-function unregisterModalLayer(): void {
-    if (!modalLayerRegistered) {
-        return
-    }
-
-    unlockApplication()
-    unlockBodyScroll()
-
-    applicationUi.closeModalLayer()
-
-    modalLayerRegistered = false
-    modalLayerPosition = 0
-
-    const elementToFocus = previouslyFocusedElement
-
-    previouslyFocusedElement = null
-
-    nextTick(() => {
-        if (elementToFocus?.isConnected) {
-            elementToFocus.focus()
-        }
-    })
+    focusTrap.handleKeydown(event)
 }
 
 watch(
     opened,
-    (isOpened) => {
+    async (isOpened) => {
         if (isOpened) {
-            registerModalLayer()
+            modalLayer.activate()
+            await focusTrap.activate()
 
             return
         }
 
-        unregisterModalLayer()
+        focusTrap.deactivate()
+        modalLayer.deactivate()
     },
     {
         immediate: true,
@@ -209,7 +77,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     document.removeEventListener('keydown', handleKeyboard)
-    unregisterModalLayer()
 })
 </script>
 

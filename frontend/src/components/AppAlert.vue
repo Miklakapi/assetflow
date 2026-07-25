@@ -76,7 +76,7 @@ async function copyAlert(): Promise<void> {
         return
     }
 
-    feedback.success('Copied')
+    feedback.show('Copied')
 }
 </script>
 

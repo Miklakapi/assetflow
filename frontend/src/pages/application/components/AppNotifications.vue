@@ -245,7 +245,7 @@ async function copyNotification(notification: NotificationItem): Promise<void> {
         return
     }
 
-    feedback.success('Copied')
+    feedback.show('Copied')
 }
 
 function formatNotificationForClipboard(notification: NotificationItem): string {

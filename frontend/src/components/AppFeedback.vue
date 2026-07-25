@@ -2,19 +2,8 @@
     <Teleport to="body">
         <div ref="popoverRef" :style="popoverStyle" class="app-feedback-popover" popover="manual">
             <Transition name="app-feedback" mode="out-in" @after-leave="hidePopover">
-                <div
-                    v-if="feedback.item"
-                    ref="feedbackRef"
-                    :key="feedback.item.id"
-                    :class="`app-feedback-${feedback.item.type}`"
-                    class="app-feedback"
-                >
-                    <component
-                        :is="feedbackIcons[feedback.item.type]"
-                        :size="14"
-                        :stroke-width="2.2"
-                        class="app-feedback-icon"
-                    />
+                <div v-if="feedback.item" ref="feedbackRef" :key="feedback.item.id" class="app-feedback">
+                    <Info :size="14" :stroke-width="2.2" class="app-feedback-icon" />
 
                     <span class="app-feedback-message">
                         {{ feedback.item.message }}
@@ -26,11 +15,10 @@
 </template>
 
 <script setup lang="ts">
-import { CheckCircle2, CircleAlert, Info, TriangleAlert, type LucideIcon } from '@lucide/vue'
+import { Info } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import { useFeedbackStore } from '@/stores/feedback'
-import type { NotificationType } from '@/stores/notifications'
 
 const feedback = useFeedbackStore()
 
@@ -38,15 +26,19 @@ const popoverRef = ref<HTMLElement | null>(null)
 const feedbackRef = ref<HTMLElement | null>(null)
 const positionX = ref(0)
 const positionY = ref(0)
+const isTouchDevice = ref(false)
 
-const feedbackIcons: Record<NotificationType, LucideIcon> = {
-    success: CheckCircle2,
-    info: Info,
-    warning: TriangleAlert,
-    error: CircleAlert,
-}
+const touchDeviceMedia = window.matchMedia('(hover: none) and (pointer: coarse)')
 
 const popoverStyle = computed(() => {
+    if (isTouchDevice.value) {
+        return {
+            top: 'calc(env(safe-area-inset-top) + 12px)',
+            left: '50%',
+            transform: 'translateX(-50%)',
+        }
+    }
+
     return {
         left: `${positionX.value}px`,
         top: `${positionY.value}px`,
@@ -54,7 +46,15 @@ const popoverStyle = computed(() => {
 })
 
 function handlePointerMove(event: PointerEvent): void {
+    if (isTouchDevice.value) {
+        return
+    }
+
     feedback.setPointerPosition(event.clientX, event.clientY)
+}
+
+function handleTouchDeviceChange(event: MediaQueryListEvent): void {
+    isTouchDevice.value = event.matches
 }
 
 async function showFeedback(): Promise<void> {
@@ -65,12 +65,16 @@ async function showFeedback(): Promise<void> {
         return
     }
 
-    positionX.value = item.x + 12
-    positionY.value = item.y + 12
-
     if (!popover.matches(':popover-open')) {
         popover.showPopover()
     }
+
+    if (isTouchDevice.value) {
+        return
+    }
+
+    positionX.value = item.x + 12
+    positionY.value = item.y + 12
 
     await nextTick()
 
@@ -117,13 +121,18 @@ watch(
 )
 
 onMounted(() => {
+    isTouchDevice.value = touchDeviceMedia.matches
+
     window.addEventListener('pointermove', handlePointerMove, {
         passive: true,
     })
+
+    touchDeviceMedia.addEventListener('change', handleTouchDeviceChange)
 })
 
 onBeforeUnmount(() => {
     window.removeEventListener('pointermove', handlePointerMove)
+    touchDeviceMedia.removeEventListener('change', handleTouchDeviceChange)
     hidePopover()
 })
 </script>
@@ -149,38 +158,22 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: 6px;
     padding: 5px 8px;
-    border: 1px solid color-mix(in srgb, var(--feedback-color) 32%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
     border-radius: 7px;
     background:
         linear-gradient(
-            color-mix(in srgb, var(--feedback-color) 10%, transparent),
-            color-mix(in srgb, var(--feedback-color) 5%, transparent)
+            color-mix(in srgb, var(--color-primary) 8%, transparent),
+            color-mix(in srgb, var(--color-primary) 3%, transparent)
         ),
         color-mix(in srgb, var(--color-surface) 96%, transparent);
     box-shadow:
         0 8px 20px rgb(var(--color-shadow) / 18%),
-        0 0 0 2px color-mix(in srgb, var(--feedback-color) 8%, transparent);
-    color: var(--feedback-color);
+        0 0 0 2px color-mix(in srgb, var(--color-primary) 7%, transparent);
+    color: var(--color-primary);
     backdrop-filter: blur(8px) saturate(120%);
     -webkit-backdrop-filter: blur(8px) saturate(120%);
     pointer-events: none;
     transform-origin: center;
-}
-
-.app-feedback-success {
-    --feedback-color: var(--color-success);
-}
-
-.app-feedback-info {
-    --feedback-color: var(--color-info);
-}
-
-.app-feedback-warning {
-    --feedback-color: var(--color-warning);
-}
-
-.app-feedback-error {
-    --feedback-color: var(--color-error);
 }
 
 .app-feedback-icon {

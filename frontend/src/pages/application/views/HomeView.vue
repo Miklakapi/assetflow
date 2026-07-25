@@ -62,8 +62,8 @@
                     Top position
                 </button>
 
-                <button class="home-button home-button-error" type="button" @click="errorDialogOpened = true">
-                    Dialog with error
+                <button class="home-button home-button-primary" type="button" @click="openAlertsDialog">
+                    Dialog alerts
                 </button>
             </div>
         </div>
@@ -165,35 +165,30 @@
             </template>
         </AppDialog>
 
-        <AppDialog v-model:opened="errorDialogOpened" type="modal" title="Save product" width="680px">
-            <template #error>
-                <AppError
-                    title="The product could not be saved"
-                    message="The server rejected the request because the selected supplier is inactive and two required asset fields are missing. Correct the highlighted values and try again."
-                    details="POST /api/products returned HTTP 422. Validation failed for supplierId, primaryAssetId and previewAssetId."
+        <AppDialog v-model:opened="alertsDialogOpened" type="modal" title="Application alerts" width="680px">
+            <div v-if="alerts.length" class="popup-alerts">
+                <AppAlert
+                    v-for="alert in alerts"
+                    :key="alert.id"
+                    :type="alert.type"
+                    :title="alert.title"
+                    :message="alert.message"
+                    :details="alert.details"
+                    dismissible
+                    @close="removeAlert(alert.id)"
                 />
-            </template>
-
-            <div class="popup-example">
-                <label class="popup-example-field">
-                    <span>Product name</span>
-
-                    <input type="text" value="Example product" />
-                </label>
-
-                <label class="popup-example-field">
-                    <span>Supplier</span>
-
-                    <input type="text" value="Inactive supplier" />
-                </label>
             </div>
 
+            <div v-else class="popup-alerts-empty">All alerts have been dismissed.</div>
+
             <template #footer>
-                <button class="popup-button popup-button-secondary" type="button" @click="errorDialogOpened = false">
-                    Cancel
+                <button class="popup-button popup-button-secondary" type="button" @click="resetAlerts">
+                    Reset alerts
                 </button>
 
-                <button class="popup-button popup-button-primary" type="button">Try again</button>
+                <button class="popup-button popup-button-primary" type="button" @click="alertsDialogOpened = false">
+                    Close
+                </button>
             </template>
         </AppDialog>
     </section>
@@ -202,9 +197,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+import AppAlert from '@/components/AppAlert.vue'
 import AppDialog from '@/components/AppDialog.vue'
-import AppError from '@/components/AppError.vue'
-import { useNotificationsStore } from '@/stores/notifications'
+import { useNotificationsStore, type NotificationType } from '@/stores/notifications'
+
+interface AlertItem {
+    id: number
+    type: NotificationType
+    title: string
+    message?: string
+    details?: string
+}
 
 const notifications = useNotificationsStore()
 
@@ -213,7 +216,54 @@ const modalOpened = ref(false)
 const blockingDialogOpened = ref(false)
 const sizedDialogOpened = ref(false)
 const positionedDialogOpened = ref(false)
-const errorDialogOpened = ref(false)
+const alertsDialogOpened = ref(false)
+
+const alerts = ref<AlertItem[]>([])
+
+const defaultAlerts: AlertItem[] = [
+    {
+        id: 1,
+        type: 'success',
+        title: 'Product saved',
+        message: 'All product changes were saved successfully.',
+    },
+    {
+        id: 2,
+        type: 'info',
+        title: 'Import in progress',
+        message: 'Assets are being imported in the background. You can continue working.',
+        details: 'Import ID: IMP-2026-00428',
+    },
+    {
+        id: 3,
+        type: 'warning',
+        title: 'Missing information',
+        message: 'Some optional product fields have not been completed.',
+    },
+    {
+        id: 4,
+        type: 'error',
+        title: 'The product could not be saved',
+        message: 'The selected supplier is inactive and two required asset fields are missing.',
+        details:
+            'POST /api/products returned HTTP 422. Validation failed for supplierId, primaryAssetId and previewAssetId.',
+    },
+]
+
+function openAlertsDialog(): void {
+    resetAlerts()
+    alertsDialogOpened.value = true
+}
+
+function removeAlert(id: number): void {
+    alerts.value = alerts.value.filter((alert) => alert.id !== id)
+}
+
+function resetAlerts(): void {
+    alerts.value = defaultAlerts.map((alert) => ({
+        ...alert,
+    }))
+}
 
 function showSuccess(): void {
     notifications.success('Product saved', {
@@ -422,6 +472,17 @@ function showSavedLongError(): void {
 .popup-example-field input:focus {
     border-color: var(--color-border-focus);
     box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.popup-alerts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.popup-alerts-empty {
+    color: var(--color-text-muted);
+    font-size: 12px;
 }
 
 .popup-button {

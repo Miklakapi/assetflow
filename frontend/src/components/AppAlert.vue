@@ -16,11 +16,9 @@
 
         <div class="app-alert-actions">
             <button class="app-alert-action app-alert-copy" type="button" @click="copyAlert">
-                <Check v-if="copied" :size="14" />
+                <Copy :size="14" />
 
-                <Copy v-else :size="14" />
-
-                {{ copied ? 'Copied' : 'Copy' }}
+                Copy
             </button>
 
             <button
@@ -36,11 +34,13 @@
 </template>
 
 <script setup lang="ts">
-import { Check, CheckCircle2, CircleAlert, Copy, Info, TriangleAlert, X, type LucideIcon } from '@lucide/vue'
-import { onBeforeUnmount, ref } from 'vue'
+import { CheckCircle2, CircleAlert, Copy, Info, TriangleAlert, X, type LucideIcon } from '@lucide/vue'
 
 import type { NotificationType } from '@/stores/notifications'
 import { copyText } from '@/utils/copyText'
+import { useFeedbackStore } from '@/stores/feedback'
+
+const feedback = useFeedbackStore()
 
 const props = withDefaults(
     defineProps<{
@@ -61,8 +61,6 @@ const emit = defineEmits<{
     close: []
 }>()
 
-const copied = ref(false)
-
 const alertIcons: Record<NotificationType, LucideIcon> = {
     success: CheckCircle2,
     info: Info,
@@ -70,33 +68,16 @@ const alertIcons: Record<NotificationType, LucideIcon> = {
     error: CircleAlert,
 }
 
-let copiedTimeout: ReturnType<typeof setTimeout> | null = null
-
 async function copyAlert(): Promise<void> {
     const content = [props.title, props.message, props.details].filter(Boolean).join('\n\n')
     const wasCopied = await copyText(content)
-
-    copied.value = wasCopied
 
     if (!wasCopied) {
         return
     }
 
-    if (copiedTimeout) {
-        clearTimeout(copiedTimeout)
-    }
-
-    copiedTimeout = setTimeout(() => {
-        copied.value = false
-        copiedTimeout = null
-    }, 2000)
+    feedback.success('Copied')
 }
-
-onBeforeUnmount(() => {
-    if (copiedTimeout) {
-        clearTimeout(copiedTimeout)
-    }
-})
 </script>
 
 <style scoped>

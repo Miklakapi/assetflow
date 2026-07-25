@@ -124,11 +124,9 @@
                                 type="button"
                                 @click="copyNotification(notification)"
                             >
-                                <Check v-if="copiedNotificationId === notification.id" :size="14" />
+                                <Copy :size="14" />
 
-                                <Copy v-else :size="14" />
-
-                                {{ copiedNotificationId === notification.id ? 'Copied' : 'Copy' }}
+                                Copy
                             </button>
 
                             <RouterLink
@@ -160,7 +158,6 @@ import {
     ArrowRight,
     Bell,
     BellOff,
-    Check,
     CheckCircle2,
     ChevronDown,
     ChevronUp,
@@ -171,18 +168,19 @@ import {
     X,
     type LucideIcon,
 } from '@lucide/vue'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import AppSidePanel from '@/components/AppSidePanel.vue'
 import { useNotificationsStore, type NotificationItem, type NotificationType } from '@/stores/notifications'
 import { copyText } from '@/utils/copyText'
+import { useFeedbackStore } from '@/stores/feedback'
 
 const notifications = useNotificationsStore()
+const feedback = useFeedbackStore()
 
 const panelOpened = ref(false)
 const expandedNotificationIds = ref<number[]>([])
-const copiedNotificationId = ref<number | null>(null)
 
 const notificationIcons: Record<NotificationType, LucideIcon> = {
     success: CheckCircle2,
@@ -194,8 +192,6 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
 const formattedUnreadCount = computed(() => {
     return notifications.unreadCount > 99 ? '99+' : notifications.unreadCount
 })
-
-let copiedNotificationTimeout: number | null = null
 
 function togglePanel(): void {
     const shouldOpen = !panelOpened.value
@@ -232,16 +228,11 @@ function toggleNotificationDetails(id: number): void {
 function removeNotification(id: number): void {
     expandedNotificationIds.value = expandedNotificationIds.value.filter((notificationId) => notificationId !== id)
 
-    if (copiedNotificationId.value === id) {
-        copiedNotificationId.value = null
-    }
-
     notifications.removeNotification(id)
 }
 
 function clearNotifications(): void {
     expandedNotificationIds.value = []
-    copiedNotificationId.value = null
 
     notifications.clearNotifications()
 }
@@ -254,16 +245,7 @@ async function copyNotification(notification: NotificationItem): Promise<void> {
         return
     }
 
-    copiedNotificationId.value = notification.id
-
-    if (copiedNotificationTimeout !== null) {
-        window.clearTimeout(copiedNotificationTimeout)
-    }
-
-    copiedNotificationTimeout = window.setTimeout(() => {
-        copiedNotificationId.value = null
-        copiedNotificationTimeout = null
-    }, 1_600)
+    feedback.success('Copied')
 }
 
 function formatNotificationForClipboard(notification: NotificationItem): string {
@@ -295,12 +277,6 @@ function formatCreatedAt(createdAt: string): string {
         minute: '2-digit',
     }).format(new Date(createdAt))
 }
-
-onBeforeUnmount(() => {
-    if (copiedNotificationTimeout !== null) {
-        window.clearTimeout(copiedNotificationTimeout)
-    }
-})
 </script>
 
 <style scoped>

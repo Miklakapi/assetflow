@@ -12,7 +12,7 @@
                 <span v-else class="application-logo-mark">A</span>
             </div>
 
-            <ApplicationMenu
+            <AppMenu
                 :expanded="sidebarExpanded"
                 :opened-section-id="openedSectionId"
                 @open-section="openSidebarSection"
@@ -23,10 +23,10 @@
             <header class="application-header">
                 <div class="application-header-title">Asset management</div>
 
-                <ApplicationSearch />
+                <AppSearch />
 
                 <div class="application-header-actions">
-                    <ApplicationNotifications />
+                    <AppNotifications />
 
                     <button class="application-header-button" type="button">
                         <Settings :size="17" />
@@ -49,9 +49,9 @@
 import { Settings, User } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-import ApplicationMenu from '../components/ApplicationMenu.vue'
-import ApplicationNotifications from '../components/ApplicationNotifications.vue'
-import ApplicationSearch from '../components/ApplicationSearch.vue'
+import AppMenu from '../components/AppMenu.vue'
+import AppNotifications from '../components/AppNotifications.vue'
+import AppSearch from '../components/AppSearch.vue'
 
 const sidebarRef = ref<HTMLElement | null>(null)
 const sidebarExpanded = ref(false)

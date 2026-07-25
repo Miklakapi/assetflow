@@ -236,6 +236,7 @@ function showWarning(): void {
 function showError(): void {
     notifications.error('Request failed', {
         message: 'The server could not process the request.',
+        details: 'POST /api/products returned HTTP 422.\nValidation failed for supplierId and primaryAssetId.',
     })
 }
 
@@ -243,6 +244,8 @@ function showLongError(): void {
     notifications.error('The order synchronization request could not be completed successfully', {
         message:
             'The external system returned an unexpected response while synchronizing the order. Some related assets, reservation dates, assigned users and pricing information may not have been updated. Review the synchronization logs and try again after verifying the external service connection.',
+        details:
+            'POST /api/orders/428/synchronize returned HTTP 503.\nUpstream service: asset-registry\nRequest ID: req_01JZ3AG17K3J4P7X4H9M6R2WQE',
         duration: 12_000,
     })
 }
@@ -274,6 +277,8 @@ function showSavedWarning(): void {
 function showSavedError(): void {
     notifications.error('Order synchronization failed', {
         message: 'The order could not be synchronized with the external system.',
+        details:
+            'POST /api/orders/428/synchronize returned HTTP 422.\nValidation failed for warehouseId and assignedUserId.',
         save: true,
         route: '/orders',
     })
@@ -283,6 +288,8 @@ function showSavedLongError(): void {
     notifications.error('Order synchronization failed because several related records could not be processed', {
         message:
             'The external system rejected the synchronization request because some assets referenced by the order no longer exist, several reservation dates overlap with existing reservations and one assigned user does not have permission to access the selected warehouse. Open the order to review all validation errors before attempting synchronization again.',
+        details:
+            'POST /api/orders/428/synchronize returned HTTP 422.\n\nMissing assets: AST-1042, AST-1048\nOverlapping reservations: RES-302, RES-309\nUnauthorized user: USR-91\nRequest ID: req_01JZ3AG17K3J4P7X4H9M6R2WQE',
         duration: 12_000,
         save: true,
         route: '/orders',

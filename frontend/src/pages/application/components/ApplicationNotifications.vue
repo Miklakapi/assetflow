@@ -83,6 +83,13 @@
                                 <span v-if="notification.message" class="application-notification-message">
                                     {{ notification.message }}
                                 </span>
+
+                                <span
+                                    v-if="notification.details && isNotificationExpanded(notification.id)"
+                                    class="application-notification-details"
+                                >
+                                    {{ notification.details }}
+                                </span>
                             </span>
 
                             <span v-if="!notification.isRead" class="application-notification-indicator"></span>
@@ -169,6 +176,7 @@ import { RouterLink } from 'vue-router'
 
 import AppSidePanel from '@/components/AppSidePanel.vue'
 import { useNotificationsStore, type NotificationItem, type NotificationType } from '@/stores/notifications'
+import { copyText } from '@/utils/copyText'
 
 const notifications = useNotificationsStore()
 
@@ -204,7 +212,7 @@ function closePanel(): void {
 }
 
 function hasExpandableContent(notification: NotificationItem): boolean {
-    return notification.title.length > 48 || (notification.message?.length ?? 0) > 100
+    return Boolean(notification.details || notification.title.length > 48 || (notification.message?.length ?? 0) > 100)
 }
 
 function isNotificationExpanded(id: number): boolean {
@@ -240,8 +248,11 @@ function clearNotifications(): void {
 
 async function copyNotification(notification: NotificationItem): Promise<void> {
     const content = formatNotificationForClipboard(notification)
+    const wasCopied = await copyText(content)
 
-    await copyText(content)
+    if (!wasCopied) {
+        return
+    }
 
     copiedNotificationId.value = notification.id
 
@@ -262,26 +273,11 @@ function formatNotificationForClipboard(notification: NotificationItem): string 
         content.push('', notification.message)
     }
 
-    return content.join('\n')
-}
-
-async function copyText(value: string): Promise<void> {
-    if (navigator.clipboard) {
-        await navigator.clipboard.writeText(value)
-
-        return
+    if (notification.details) {
+        content.push('', notification.details)
     }
 
-    const textarea = document.createElement('textarea')
-
-    textarea.value = value
-    textarea.style.position = 'fixed'
-    textarea.style.opacity = '0'
-
-    document.body.append(textarea)
-    textarea.select()
-    document.execCommand('copy')
-    textarea.remove()
+    return content.join('\n')
 }
 
 function handleNotificationLinkClick(event: MouseEvent, id: number): void {
@@ -543,6 +539,23 @@ onBeforeUnmount(() => {
     line-clamp: 2;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+}
+
+.application-notification-details {
+    display: block;
+    max-height: 180px;
+    margin-top: 8px;
+    padding: 8px;
+    overflow: auto;
+    border: 1px solid color-mix(in srgb, var(--notification-color, var(--color-error)) 18%, transparent);
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--notification-color, var(--color-error)) 5%, var(--color-surface));
+    color: var(--color-text-muted);
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 16px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .application-notification-expanded .application-notification-title {

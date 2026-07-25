@@ -19,6 +19,8 @@
                     <div v-if="toast.message" class="notification-message">
                         {{ toast.message }}
                     </div>
+
+                    <pre v-if="toast.details" class="notification-details">{{ toast.details }}</pre>
                 </div>
 
                 <button class="notification-close" type="button" @click="notifications.removeToast(toast.id)">
@@ -51,7 +53,7 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
     top: 64px;
     right: 16px;
     display: flex;
-    width: min(360px, calc(100vw - 32px));
+    width: min(380px, calc(100vw - 32px));
     flex-direction: column;
     gap: 10px;
     pointer-events: none;
@@ -133,6 +135,22 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
     font-size: 12px;
     font-weight: 500;
     line-height: 17px;
+}
+
+.notification-details {
+    max-height: 140px;
+    margin: 6px 0 0;
+    padding: 8px;
+    overflow: auto;
+    border: 1px solid color-mix(in srgb, var(--notification-color) 18%, transparent);
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--notification-color) 5%, var(--color-surface));
+    color: var(--color-text-muted);
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 16px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .notification-close {

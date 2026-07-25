@@ -8,6 +8,7 @@ export interface ToastItem {
     type: NotificationType
     title: string
     message: string | null
+    details: string | null
     duration: number
 }
 
@@ -16,6 +17,7 @@ export interface NotificationItem {
     type: NotificationType
     title: string
     message: string | null
+    details: string | null
     route: string | null
     createdAt: string
     isRead: boolean
@@ -23,6 +25,7 @@ export interface NotificationItem {
 
 export interface NotificationOptions {
     message?: string
+    details?: string
     duration?: number
     save?: boolean
     route?: string
@@ -155,6 +158,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
             type: options.type,
             title: options.title,
             message: options.message ?? null,
+            details: options.details ?? null,
             duration,
         })
 
@@ -175,6 +179,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
             type: options.type,
             title: options.title,
             message: options.message ?? null,
+            details: options.details ?? null,
             route: options.route ?? null,
             createdAt: new Date().toISOString(),
             isRead: false,

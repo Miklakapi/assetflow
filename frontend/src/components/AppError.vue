@@ -25,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { copyText } from '@/utils/copyText'
 import { Check, CircleAlert, Copy } from '@lucide/vue'
 import { ref } from 'vue'
 
@@ -40,22 +41,21 @@ let copiedTimeout: ReturnType<typeof setTimeout> | null = null
 
 async function copyError(): Promise<void> {
     const content = [props.title, props.message, props.details].filter(Boolean).join('\n\n')
+    const wasCopied = await copyText(content)
 
-    try {
-        await navigator.clipboard.writeText(content)
+    copied.value = wasCopied
 
-        copied.value = true
-
-        if (copiedTimeout) {
-            clearTimeout(copiedTimeout)
-        }
-
-        copiedTimeout = setTimeout(() => {
-            copied.value = false
-        }, 2000)
-    } catch {
-        copied.value = false
+    if (!wasCopied) {
+        return
     }
+
+    if (copiedTimeout) {
+        clearTimeout(copiedTimeout)
+    }
+
+    copiedTimeout = setTimeout(() => {
+        copied.value = false
+    }, 2000)
 }
 </script>
 

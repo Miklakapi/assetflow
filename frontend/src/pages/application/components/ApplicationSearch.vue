@@ -46,15 +46,17 @@
 
 <script setup lang="ts">
 import { Search } from '@lucide/vue'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import FuzzyHighlight from '@/components/FuzzyHighlight.vue'
 import type { MenuItem } from '@/domain/menu/schema'
+import { useApplicationUiStore } from '@/stores/application-ui'
 import { useMenuStore } from '@/stores/menu'
 import { fuzzySearch } from '@/utils/fuzzy-search'
 
 const router = useRouter()
+const applicationUi = useApplicationUiStore()
 const menu = useMenuStore()
 
 const searchRef = ref<HTMLElement | null>(null)
@@ -103,6 +105,12 @@ function isMacPlatform(): boolean {
 }
 
 function openResults(): void {
+    if (applicationUi.isModalLayerOpened) {
+        inputRef.value?.blur()
+
+        return
+    }
+
     resultsOpened.value = true
     selectedResultIndex.value = 0
 }
@@ -158,6 +166,11 @@ function handleKeyboardShortcut(event: KeyboardEvent): void {
     }
 
     event.preventDefault()
+
+    if (applicationUi.isModalLayerOpened) {
+        return
+    }
+
     inputRef.value?.focus()
     openResults()
 }
@@ -175,6 +188,15 @@ function closeOnOutsideClick(event: PointerEvent): void {
 
     resultsOpened.value = false
 }
+
+watch(
+    () => applicationUi.isModalLayerOpened,
+    (isModalLayerOpened) => {
+        if (isModalLayerOpened) {
+            closeSearch()
+        }
+    },
+)
 
 onMounted(() => {
     menu.loadMenu()

@@ -13,6 +13,10 @@
 <script setup lang="ts">
 import { onBeforeUnmount, watch } from 'vue'
 
+import { useApplicationUiStore } from '@/stores/application-ui'
+
+const applicationUi = useApplicationUiStore()
+
 const props = withDefaults(
     defineProps<{
         width?: string
@@ -27,6 +31,7 @@ const opened = defineModel<boolean>('opened', {
 })
 
 let previousBodyOverflow = ''
+let modalLayerRegistered = false
 
 function close(): void {
     opened.value = false
@@ -49,16 +54,36 @@ function unlockBodyScroll(): void {
     document.body.style.overflow = previousBodyOverflow
 }
 
+function registerModalLayer(): void {
+    if (modalLayerRegistered) {
+        return
+    }
+
+    applicationUi.openModalLayer()
+    modalLayerRegistered = true
+}
+
+function unregisterModalLayer(): void {
+    if (!modalLayerRegistered) {
+        return
+    }
+
+    applicationUi.closeModalLayer()
+    modalLayerRegistered = false
+}
+
 watch(
     opened,
     (isOpened) => {
         if (isOpened) {
             lockBodyScroll()
+            registerModalLayer()
 
             return
         }
 
         unlockBodyScroll()
+        unregisterModalLayer()
     },
     {
         immediate: true,
@@ -70,6 +95,7 @@ document.addEventListener('keydown', closeOnEscape)
 onBeforeUnmount(() => {
     document.removeEventListener('keydown', closeOnEscape)
     unlockBodyScroll()
+    unregisterModalLayer()
 })
 </script>
 

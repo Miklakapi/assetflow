@@ -39,13 +39,200 @@
                 </button>
             </div>
         </div>
+
+        <div class="home-section">
+            <h2 class="home-section-title">Dialogs</h2>
+
+            <div class="home-actions">
+                <button class="home-button home-button-primary" type="button" @click="dialogOpened = true">
+                    Dialog
+                </button>
+
+                <button class="home-button home-button-primary" type="button" @click="modalOpened = true">Modal</button>
+
+                <button class="home-button home-button-primary" type="button" @click="blockingDialogOpened = true">
+                    Blocking
+                </button>
+
+                <button class="home-button home-button-primary" type="button" @click="sizedDialogOpened = true">
+                    Custom size
+                </button>
+
+                <button class="home-button home-button-primary" type="button" @click="positionedDialogOpened = true">
+                    Top position
+                </button>
+
+                <button class="home-button home-button-error" type="button" @click="errorDialogOpened = true">
+                    Dialog with error
+                </button>
+            </div>
+        </div>
+
+        <ApplicationDialog v-model:opened="dialogOpened" type="dialog" title="Product preview">
+            <div class="popup-example">
+                <p class="popup-example-text">
+                    This dialog can be closed with Escape, the close button or by clicking the backdrop. It can also be
+                    moved using its header.
+                </p>
+            </div>
+
+            <template #footer>
+                <button class="popup-button popup-button-primary" type="button" @click="dialogOpened = false">
+                    Close
+                </button>
+            </template>
+        </ApplicationDialog>
+
+        <ApplicationDialog v-model:opened="modalOpened" type="modal" title="Edit product">
+            <div class="popup-example">
+                <p class="popup-example-text">
+                    Clicking the backdrop does not close this modal. Escape and the close button remain available.
+                </p>
+
+                <label class="popup-example-field">
+                    <span>Product name</span>
+
+                    <input type="text" value="Example product" />
+                </label>
+            </div>
+
+            <template #footer>
+                <button class="popup-button popup-button-secondary" type="button" @click="modalOpened = false">
+                    Cancel
+                </button>
+
+                <button class="popup-button popup-button-primary" type="button" @click="modalOpened = false">
+                    Save
+                </button>
+            </template>
+        </ApplicationDialog>
+
+        <ApplicationDialog v-model:opened="blockingDialogOpened" type="blocking" title="Unsaved changes" width="480px">
+            <div class="popup-example">
+                <p class="popup-example-text">
+                    This dialog cannot be closed by clicking the backdrop, pressing Escape or using a close button. One
+                    of the actions below must be selected.
+                </p>
+            </div>
+
+            <template #footer>
+                <button class="popup-button popup-button-secondary" type="button" @click="blockingDialogOpened = false">
+                    Continue editing
+                </button>
+
+                <button class="popup-button popup-button-primary" type="button" @click="blockingDialogOpened = false">
+                    Leave without saving
+                </button>
+            </template>
+        </ApplicationDialog>
+
+        <ApplicationDialog
+            v-model:opened="sizedDialogOpened"
+            type="modal"
+            title="Large dialog"
+            width="820px"
+            height="560px"
+        >
+            <div class="popup-example">
+                <p class="popup-example-text">
+                    This dialog has an explicitly configured width and height. The content area should scroll when its
+                    content becomes too large.
+                </p>
+
+                <p v-for="index in 15" :key="index" class="popup-example-row">Example content row {{ index }}</p>
+            </div>
+
+            <template #footer>
+                <button class="popup-button popup-button-primary" type="button" @click="sizedDialogOpened = false">
+                    Close
+                </button>
+            </template>
+        </ApplicationDialog>
+
+        <ApplicationDialog
+            v-model:opened="positionedDialogOpened"
+            type="modal"
+            title="Top positioned dialog"
+            width="560px"
+            position="top"
+        >
+            <div class="popup-example">
+                <p class="popup-example-text">
+                    This dialog starts near the top of the screen and can still be moved freely using its header.
+                </p>
+
+                <button class="popup-button popup-button-secondary" type="button">Focusable action</button>
+            </div>
+
+            <template #footer>
+                <button class="popup-button popup-button-primary" type="button" @click="positionedDialogOpened = false">
+                    Done
+                </button>
+            </template>
+        </ApplicationDialog>
+
+        <ApplicationDialog v-model:opened="errorDialogOpened" type="modal" title="Save product" width="680px">
+            <template #error>
+                <div class="popup-error">
+                    <CircleAlert :size="20" :stroke-width="2" />
+
+                    <div class="popup-error-content">
+                        <div class="popup-error-title">The product could not be saved</div>
+
+                        <div class="popup-error-message">
+                            The server rejected the request because the selected supplier is inactive and two required
+                            asset fields are missing. Correct the highlighted values and try again.
+                        </div>
+                    </div>
+
+                    <button class="popup-error-copy" type="button">
+                        <Copy :size="15" />
+
+                        Copy
+                    </button>
+                </div>
+            </template>
+
+            <div class="popup-example">
+                <label class="popup-example-field">
+                    <span>Product name</span>
+
+                    <input type="text" value="Example product" />
+                </label>
+
+                <label class="popup-example-field">
+                    <span>Supplier</span>
+
+                    <input type="text" value="Inactive supplier" />
+                </label>
+            </div>
+
+            <template #footer>
+                <button class="popup-button popup-button-secondary" type="button" @click="errorDialogOpened = false">
+                    Cancel
+                </button>
+
+                <button class="popup-button popup-button-primary" type="button">Try again</button>
+            </template>
+        </ApplicationDialog>
     </section>
 </template>
 
 <script setup lang="ts">
+import { CircleAlert, Copy } from '@lucide/vue'
+import { ref } from 'vue'
+
+import ApplicationDialog from '@/components/ApplicationDialog.vue'
 import { useNotificationsStore } from '@/stores/notifications'
 
 const notifications = useNotificationsStore()
+
+const dialogOpened = ref(false)
+const modalOpened = ref(false)
+const blockingDialogOpened = ref(false)
+const sizedDialogOpened = ref(false)
+const positionedDialogOpened = ref(false)
+const errorDialogOpened = ref(false)
 
 function showSuccess(): void {
     notifications.success('Product saved', {
@@ -173,6 +360,12 @@ function showSavedLongError(): void {
     filter: brightness(0.97);
 }
 
+.home-button-primary {
+    border-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 9%, transparent);
+    color: var(--color-primary);
+}
+
 .home-button-success {
     border-color: color-mix(in srgb, var(--color-success) 25%, transparent);
     background: color-mix(in srgb, var(--color-success) 9%, transparent);
@@ -195,5 +388,129 @@ function showSavedLongError(): void {
     border-color: color-mix(in srgb, var(--color-error) 25%, transparent);
     background: color-mix(in srgb, var(--color-error) 9%, transparent);
     color: var(--color-error);
+}
+
+.popup-example {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.popup-example-text {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.popup-example-row {
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    color: var(--color-text);
+    font-size: 13px;
+}
+
+.popup-example-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.popup-example-field input {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    outline: none;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.popup-example-field input:focus {
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.popup-button {
+    min-height: 34px;
+    padding: 0 13px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.popup-button-primary {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+}
+
+.popup-button-primary:hover {
+    background: var(--color-primary-hover);
+}
+
+.popup-button-secondary {
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.popup-button-secondary:hover {
+    background: var(--color-surface-hover);
+}
+
+.popup-error {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid color-mix(in srgb, var(--color-error) 24%, transparent);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-error) 8%, transparent);
+    color: var(--color-error);
+}
+
+.popup-error-content {
+    min-width: 0;
+}
+
+.popup-error-title {
+    color: var(--color-text-strong);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.popup-error-message {
+    margin-top: 3px;
+    color: var(--color-text);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.popup-error-copy {
+    display: flex;
+    min-height: 30px;
+    align-items: center;
+    gap: 4px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-error);
+    font-size: 11px;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.popup-error-copy:hover {
+    background: color-mix(in srgb, var(--color-error) 9%, transparent);
 }
 </style>

@@ -33,7 +33,7 @@ interface AddNotificationOptions extends NotificationOptions {
     title: string
 }
 
-const defaultDuration = 4_000
+const defaultDuration = 8_000
 
 export const useNotificationsStore = defineStore('notifications', () => {
     const toasts = ref<ToastItem[]>([])

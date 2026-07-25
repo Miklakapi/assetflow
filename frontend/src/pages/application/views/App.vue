@@ -26,9 +26,7 @@
                 <ApplicationSearch />
 
                 <div class="application-header-actions">
-                    <button class="application-header-button" type="button">
-                        <Bell :size="17" />
-                    </button>
+                    <ApplicationNotifications />
 
                     <button class="application-header-button" type="button">
                         <Settings :size="17" />
@@ -48,10 +46,11 @@
 </template>
 
 <script setup lang="ts">
-import { Bell, Settings, User } from '@lucide/vue'
+import { Settings, User } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 import ApplicationMenu from '../components/ApplicationMenu.vue'
+import ApplicationNotifications from '../components/ApplicationNotifications.vue'
 import ApplicationSearch from '../components/ApplicationSearch.vue'
 
 const sidebarRef = ref<HTMLElement | null>(null)

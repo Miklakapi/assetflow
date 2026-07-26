@@ -59,7 +59,12 @@
                     </div>
                 </header>
 
-                <div v-if="notifications.items.length" class="application-notifications-list">
+                <TransitionGroup
+                    v-if="notifications.items.length"
+                    name="application-notification"
+                    tag="div"
+                    class="application-notifications-list"
+                >
                     <article
                         v-for="notification in notifications.items"
                         :key="notification.id"
@@ -158,7 +163,7 @@
                             </RouterLink>
                         </div>
                     </article>
-                </div>
+                </TransitionGroup>
 
                 <div v-else class="application-notifications-empty">
                     <BellOff :size="28" :stroke-width="1.7" />
@@ -401,14 +406,17 @@ function formatCreatedAt(createdAt: string): string {
 }
 
 .application-notifications-list {
+    position: relative;
     min-height: 0;
     flex: 1;
+    overflow-x: hidden;
     overflow-y: auto;
 }
 
 .application-notification {
     position: relative;
     display: grid;
+    width: 100%;
     grid-template-columns: minmax(0, 1fr) 30px;
     grid-template-areas:
         'content remove'
@@ -425,6 +433,33 @@ function formatCreatedAt(createdAt: string): string {
 
 .application-notification-unread {
     background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+}
+
+.application-notification-enter-active,
+.application-notification-leave-active {
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+}
+
+.application-notification-leave-active {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+}
+
+.application-notification-enter-from {
+    opacity: 0;
+    transform: translateX(-18px);
+}
+
+.application-notification-leave-to {
+    opacity: 0;
+    transform: translateX(32px) scale(0.97);
+}
+
+.application-notification-move {
+    transition: transform 220ms ease;
 }
 
 .application-notification-read {
@@ -621,5 +656,13 @@ function formatCreatedAt(createdAt: string): string {
     gap: 10px;
     color: var(--color-text-subtle);
     font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .application-notification-enter-active,
+    .application-notification-leave-active,
+    .application-notification-move {
+        transition: none;
+    }
 }
 </style>

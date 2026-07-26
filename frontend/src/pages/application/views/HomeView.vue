@@ -17,6 +17,119 @@
         </div>
 
         <div class="home-section">
+            <h2 class="home-section-title">Buttons</h2>
+
+            <div class="home-button-examples">
+                <div class="home-button-example">
+                    <span class="home-button-example-label">Presets</span>
+
+                    <div class="home-actions">
+                        <AppButton preset="primary" @click="showButtonFeedback('Primary clicked')">Primary</AppButton>
+
+                        <AppButton preset="secondary" @click="showButtonFeedback('Secondary clicked')">
+                            Secondary
+                        </AppButton>
+
+                        <AppButton preset="success" @click="showButtonFeedback('Success clicked')">Success</AppButton>
+
+                        <AppButton preset="info" @click="showButtonFeedback('Info clicked')">Info</AppButton>
+
+                        <AppButton preset="warning" @click="showButtonFeedback('Warning clicked')">Warning</AppButton>
+
+                        <AppButton preset="danger" @click="showButtonFeedback('Danger clicked')">Danger</AppButton>
+
+                        <AppButton preset="ghost" @click="showButtonFeedback('Ghost clicked')">Ghost</AppButton>
+                    </div>
+                </div>
+
+                <div class="home-button-example">
+                    <span class="home-button-example-label">Sizes</span>
+
+                    <div class="home-actions home-actions-aligned">
+                        <AppButton size="small" preset="primary">Small</AppButton>
+
+                        <AppButton size="medium" preset="primary">Medium</AppButton>
+
+                        <AppButton size="large" preset="primary">Large</AppButton>
+                    </div>
+                </div>
+
+                <div class="home-button-example">
+                    <span class="home-button-example-label">States</span>
+
+                    <div class="home-actions">
+                        <AppButton disabled>Disabled</AppButton>
+
+                        <AppButton :loading="manualLoading" preset="secondary" @click="startManualLoading">
+                            Controlled loading
+                        </AppButton>
+
+                        <AppButton :action="runAsyncAction" preset="primary">Automatic async action</AppButton>
+                    </div>
+                </div>
+
+                <div class="home-button-example">
+                    <span class="home-button-example-label">Confirmation</span>
+
+                    <div class="home-actions">
+                        <AppButton :action="runConfirmedAction" preset="danger" confirm>Default confirm</AppButton>
+
+                        <AppButton
+                            :action="runDeleteAction"
+                            :confirm="{
+                                title: 'Delete product',
+                                message: 'The product and its related assets will be permanently deleted.',
+                                confirmLabel: 'Delete',
+                                cancelLabel: 'Keep product',
+                            }"
+                            preset="danger"
+                        >
+                            Custom confirm
+                        </AppButton>
+                    </div>
+                </div>
+
+                <div class="home-button-example">
+                    <span class="home-button-example-label">Icon buttons</span>
+
+                    <div class="home-actions">
+                        <AppButton
+                            icon-only
+                            label="Add product"
+                            preset="primary"
+                            @click="showButtonFeedback('Product added')"
+                        >
+                            <Plus :size="15" />
+                        </AppButton>
+
+                        <AppButton
+                            :action="runDeleteAction"
+                            :confirm="{
+                                title: 'Delete product',
+                                message: 'This action cannot be undone.',
+                                confirmLabel: 'Delete',
+                            }"
+                            icon-only
+                            label="Delete product"
+                            preset="danger"
+                        >
+                            <Trash2 :size="15" />
+                        </AppButton>
+
+                        <AppButton
+                            icon-only
+                            label="More options"
+                            preset="ghost"
+                            @click="showButtonFeedback('Options clicked')"
+                        >
+                            <Ellipsis :size="16" />
+                        </AppButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="home-section">
             <h2 class="home-section-title">Temporary notifications</h2>
 
             <div class="home-actions">
@@ -215,7 +328,10 @@ import { ref } from 'vue'
 
 import AppAlert from '@/components/AppAlert.vue'
 import AppDialog from '@/components/AppDialog.vue'
+import AppButton from '@/components/AppButton.vue'
+import { useFeedbackStore } from '@/stores/feedback'
 import { useNotificationsStore, type NotificationType } from '@/stores/notifications'
+import { Ellipsis, Plus, Trash2 } from '@lucide/vue'
 
 interface AlertItem {
     id: number
@@ -226,6 +342,7 @@ interface AlertItem {
 }
 
 const notifications = useNotificationsStore()
+const feedback = useFeedbackStore()
 
 const dialogOpened = ref(false)
 const modalOpened = ref(false)
@@ -233,6 +350,7 @@ const blockingDialogOpened = ref(false)
 const sizedDialogOpened = ref(false)
 const positionedDialogOpened = ref(false)
 const alertsDialogOpened = ref(false)
+const manualLoading = ref(false)
 
 const alerts = ref<AlertItem[]>([])
 
@@ -359,6 +477,43 @@ function showSavedLongError(): void {
         duration: 12_000,
         save: true,
         route: '/orders',
+    })
+}
+
+function showButtonFeedback(message: string): void {
+    feedback.show(message)
+}
+
+function startManualLoading(): void {
+    manualLoading.value = true
+
+    window.setTimeout(() => {
+        manualLoading.value = false
+        feedback.show('Controlled action completed')
+    }, 2_000)
+}
+
+async function runAsyncAction(): Promise<void> {
+    await wait(2_000)
+
+    feedback.show('Async action completed')
+}
+
+async function runConfirmedAction(): Promise<void> {
+    await wait(1_000)
+
+    feedback.show('Confirmed action completed')
+}
+
+async function runDeleteAction(): Promise<void> {
+    await wait(1_500)
+
+    feedback.show('Product deleted')
+}
+
+function wait(duration: number): Promise<void> {
+    return new Promise((resolve) => {
+        window.setTimeout(resolve, duration)
     })
 }
 </script>

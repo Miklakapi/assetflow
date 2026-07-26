@@ -12,7 +12,7 @@ export interface FeedbackOptions {
     duration?: number
 }
 
-const defaultDuration = 700
+const defaultDuration = 1500
 
 export const useFeedbackStore = defineStore('feedback', () => {
     const item = ref<FeedbackItem | null>(null)

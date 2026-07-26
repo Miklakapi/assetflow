@@ -25,17 +25,24 @@ export const useFeedbackStore = defineStore('feedback', () => {
     function show(message: string, options: FeedbackOptions = {}): void {
         clearFeedbackTimeout()
 
+        const id = nextId
+
+        nextId += 1
+
         item.value = {
-            id: nextId,
+            id,
             message,
             x: pointerX,
             y: pointerY,
         }
 
-        nextId += 1
-
         feedbackTimeout = window.setTimeout(() => {
-            clear()
+            if (item.value?.id !== id) {
+                return
+            }
+
+            feedbackTimeout = null
+            item.value = null
         }, options.duration ?? defaultDuration)
     }
 

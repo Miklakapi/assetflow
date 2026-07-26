@@ -1,7 +1,13 @@
 <template>
     <Teleport to="body">
         <div ref="popoverRef" :style="popoverStyle" class="app-feedback-popover" popover="manual">
-            <Transition name="app-feedback" mode="out-in" @after-leave="hidePopover">
+            <Transition
+                name="app-feedback"
+                mode="out-in"
+                @before-enter="prepareFeedbackPosition"
+                @after-enter="correctFeedbackPosition"
+                @after-leave="handleAfterLeave"
+            >
                 <div v-if="feedback.item" ref="feedbackRef" :key="feedback.item.id" class="app-feedback">
                     <Info :size="14" :stroke-width="2.2" class="app-feedback-icon" />
 
@@ -57,26 +63,41 @@ function handleTouchDeviceChange(event: MediaQueryListEvent): void {
     isTouchDevice.value = event.matches
 }
 
-async function showFeedback(): Promise<void> {
-    const item = feedback.item
+function openPopover(): void {
     const popover = popoverRef.value
 
-    if (!item || !popover) {
+    if (!feedback.item || !popover || popover.matches(':popover-open')) {
         return
     }
 
-    if (!popover.matches(':popover-open')) {
-        popover.showPopover()
-    }
+    popover.showPopover()
+}
 
-    if (isTouchDevice.value) {
+function prepareFeedbackPosition(): void {
+    const item = feedback.item
+
+    if (!item || isTouchDevice.value) {
         return
     }
 
     positionX.value = item.x + 12
     positionY.value = item.y + 12
+}
+
+async function correctFeedbackPosition(): Promise<void> {
+    const item = feedback.item
+
+    if (!item || isTouchDevice.value) {
+        return
+    }
+
+    const itemId = item.id
 
     await nextTick()
+
+    if (feedback.item?.id !== itemId) {
+        return
+    }
 
     const element = feedbackRef.value
 
@@ -99,6 +120,14 @@ async function showFeedback(): Promise<void> {
     positionY.value = Math.max(viewportPadding, positionY.value)
 }
 
+function handleAfterLeave(): void {
+    if (feedback.item) {
+        return
+    }
+
+    hidePopover()
+}
+
 function hidePopover(): void {
     const popover = popoverRef.value
 
@@ -116,7 +145,7 @@ watch(
             return
         }
 
-        showFeedback()
+        openPopover()
     },
 )
 

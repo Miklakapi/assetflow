@@ -3,6 +3,20 @@
         <h1 class="home-title">Home</h1>
 
         <div class="home-section">
+            <h2 class="home-section-title">Spinner</h2>
+
+            <div class="home-spinner-examples">
+                <AppSpinner :size="14" />
+
+                <AppSpinner :size="20" />
+
+                <AppSpinner :size="28" :thickness="2.5" />
+
+                <AppSpinner size="1em" />
+            </div>
+        </div>
+
+        <div class="home-section">
             <h2 class="home-section-title">Temporary notifications</h2>
 
             <div class="home-actions">
@@ -515,5 +529,12 @@ function showSavedLongError(): void {
 
 .popup-button-secondary:hover {
     background: var(--color-surface-hover);
+}
+
+.home-spinner-examples {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--color-primary);
 }
 </style>

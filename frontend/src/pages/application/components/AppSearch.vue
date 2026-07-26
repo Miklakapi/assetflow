@@ -21,12 +21,12 @@
         </kbd>
 
         <div v-if="resultsVisible" class="application-search-results">
-            <button
+            <AppButton
                 v-for="(result, index) in filteredItems"
                 :key="result.item.id"
                 :class="{ 'application-search-result-selected': selectedResultIndex === index }"
                 class="application-search-result"
-                type="button"
+                preset="ghost"
                 @mouseenter="selectedResultIndex = index"
                 @click="openResult(result.item)"
             >
@@ -37,7 +37,7 @@
                 <span class="application-search-result-path">
                     <FuzzyHighlight :value="result.value" :matched-indexes="result.matchedIndexes" />
                 </span>
-            </button>
+            </AppButton>
 
             <div v-if="query && !filteredItems.length" class="application-search-empty">No results found</div>
         </div>
@@ -49,6 +49,7 @@ import { Search } from '@lucide/vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import AppButton from '@/components/AppButton.vue'
 import FuzzyHighlight from '@/components/FuzzyHighlight.vue'
 import type { MenuItem } from '@/domain/menu/schema'
 import { useApplicationUiStore } from '@/stores/application-ui'
@@ -277,24 +278,29 @@ onBeforeUnmount(() => {
 }
 
 .application-search-result {
-    display: flex;
     width: 100%;
     min-height: 36px;
+    justify-content: stretch;
+    padding: 0 9px;
+    color: var(--color-text);
+    text-align: left;
+    white-space: normal;
+}
+
+.application-search-result:hover:not(:disabled),
+.application-search-result-selected {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+    filter: none;
+}
+
+.application-search-result :deep(.app-button-content) {
+    display: flex;
+    width: 100%;
+    min-width: 0;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 0 9px;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--color-text);
-    text-align: left;
-    cursor: pointer;
-}
-
-.application-search-result:hover,
-.application-search-result-selected {
-    background: var(--color-surface-hover);
 }
 
 .application-search-result-label {

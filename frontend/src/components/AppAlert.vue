@@ -15,20 +15,23 @@
         </div>
 
         <div class="app-alert-actions">
-            <button class="app-alert-action app-alert-copy" type="button" @click="copyAlert">
+            <AppButton class="app-alert-action" preset="ghost" size="small" @click="copyAlert">
                 <Copy :size="14" />
 
                 Copy
-            </button>
+            </AppButton>
 
-            <button
+            <AppButton
                 v-if="props.dismissible"
-                class="app-alert-action app-alert-close"
-                type="button"
+                class="app-alert-action"
+                icon-only
+                label="Dismiss alert"
+                preset="ghost"
+                size="small"
                 @click="emit('close')"
             >
                 <X :size="14" />
-            </button>
+            </AppButton>
         </div>
     </div>
 </template>
@@ -36,9 +39,10 @@
 <script setup lang="ts">
 import { CheckCircle2, CircleAlert, Copy, Info, TriangleAlert, X, type LucideIcon } from '@lucide/vue'
 
+import AppButton from '@/components/AppButton.vue'
+import { useFeedbackStore } from '@/stores/feedback'
 import type { NotificationType } from '@/stores/notifications'
 import { copyText } from '@/utils/copyText'
-import { useFeedbackStore } from '@/stores/feedback'
 
 const feedback = useFeedbackStore()
 
@@ -154,27 +158,11 @@ async function copyAlert(): Promise<void> {
 }
 
 .app-alert-action {
-    display: flex;
-    min-height: 28px;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 0 7px;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
     color: var(--alert-color);
-    font-size: 11px;
-    font-weight: 650;
-    cursor: pointer;
 }
 
-.app-alert-action:hover {
+.app-alert-action:hover:not(:disabled) {
     background: color-mix(in srgb, var(--alert-color) 9%, transparent);
-}
-
-.app-alert-close {
-    width: 28px;
-    padding: 0;
+    color: var(--alert-color);
 }
 </style>

@@ -5,21 +5,13 @@
         </p>
 
         <template #footer>
-            <button
-                class="app-confirm-dialog-button app-confirm-dialog-button-cancel"
-                type="button"
-                @click="confirm.cancel"
-            >
+            <AppButton preset="secondary" @click="confirm.cancel">
                 {{ confirm.item?.cancelLabel }}
-            </button>
+            </AppButton>
 
-            <button
-                class="app-confirm-dialog-button app-confirm-dialog-button-confirm"
-                type="button"
-                @click="confirm.confirm"
-            >
+            <AppButton preset="danger" @click="confirm.confirm">
                 {{ confirm.item?.confirmLabel }}
-            </button>
+            </AppButton>
         </template>
     </AppDialog>
 </template>
@@ -27,6 +19,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import AppButton from '@/components/AppButton.vue'
 import AppDialog from '@/components/AppDialog.vue'
 import { useConfirmStore } from '@/stores/confirm'
 
@@ -50,41 +43,5 @@ const opened = computed({
     color: var(--color-text);
     font-size: 13px;
     line-height: 20px;
-}
-
-.app-confirm-dialog-button {
-    min-height: 34px;
-    padding: 0 13px;
-    border: 1px solid transparent;
-    border-radius: 7px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 650;
-    cursor: pointer;
-}
-
-.app-confirm-dialog-button:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--color-focus-ring);
-}
-
-.app-confirm-dialog-button-cancel {
-    border-color: var(--color-border);
-    background: var(--color-surface);
-    color: var(--color-text);
-}
-
-.app-confirm-dialog-button-cancel:hover {
-    background: var(--color-surface-hover);
-}
-
-.app-confirm-dialog-button-confirm {
-    border-color: var(--color-error);
-    background: var(--color-error);
-    color: var(--color-white);
-}
-
-.app-confirm-dialog-button-confirm:hover {
-    filter: brightness(0.94);
 }
 </style>

@@ -2,8 +2,8 @@
     <div class="application">
         <aside
             ref="sidebarRef"
-            class="application-sidebar"
             :class="{ 'application-sidebar-expanded': sidebarExpanded }"
+            class="application-sidebar"
             @click="expandSidebar"
         >
             <div class="application-logo">
@@ -28,13 +28,19 @@
                 <div class="application-header-actions">
                     <AppNotifications />
 
-                    <button class="application-header-button" type="button">
+                    <AppButton class="application-header-button" icon-only label="Settings" preset="ghost" size="small">
                         <Settings :size="17" />
-                    </button>
+                    </AppButton>
 
-                    <button class="application-user-button" type="button">
+                    <AppButton
+                        class="application-user-button"
+                        icon-only
+                        label="User account"
+                        preset="ghost"
+                        size="small"
+                    >
                         <User :size="17" />
-                    </button>
+                    </AppButton>
                 </div>
             </header>
 
@@ -49,6 +55,7 @@
 import { Settings, User } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
+import AppButton from '@/components/AppButton.vue'
 import AppMenu from '../components/AppMenu.vue'
 import AppNotifications from '../components/AppNotifications.vue'
 import AppSearch from '../components/AppSearch.vue'
@@ -176,23 +183,16 @@ onBeforeUnmount(() => {
 
 .application-header-button,
 .application-user-button {
-    display: flex;
     width: 32px;
-    height: 32px;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    border-radius: 7px;
-    background: transparent;
+    min-height: 32px;
     color: var(--color-text-muted);
-    cursor: pointer;
 }
 
-.application-header-button:hover,
-.application-user-button:hover {
+.application-header-button:hover:not(:disabled),
+.application-user-button:hover:not(:disabled) {
     background: var(--color-surface-hover);
     color: var(--color-text-strong);
+    filter: none;
 }
 
 .application-user-button {

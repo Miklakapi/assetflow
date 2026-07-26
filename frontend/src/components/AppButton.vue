@@ -10,7 +10,6 @@
         ]"
         :type="props.type"
         :disabled="isDisabled"
-        :aria-label="props.iconOnly ? props.label : undefined"
         :title="props.iconOnly ? props.label : undefined"
         class="app-button"
         @click="handleClick"

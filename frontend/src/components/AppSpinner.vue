@@ -1,7 +1,6 @@
 <template>
     <span
         :style="spinnerStyle"
-        :aria-label="props.label || undefined"
         :aria-hidden="props.label ? undefined : true"
         :role="props.label ? 'status' : undefined"
         class="app-spinner"

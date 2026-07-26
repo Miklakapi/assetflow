@@ -23,12 +23,13 @@
                     </span>
                 </RouterLink>
 
-                <button
+                <AppButton
                     v-else
                     :class="{ 'application-menu-section-opened': props.openedSectionId === item.id }"
+                    :label="item.label"
                     :title="props.expanded ? undefined : item.label"
                     class="application-menu-section-button"
-                    type="button"
+                    preset="ghost"
                     @click.stop="openSection(item.id)"
                 >
                     <span class="application-menu-icon">
@@ -38,7 +39,7 @@
                     <span v-if="props.expanded" class="application-menu-label">
                         {{ item.label }}
                     </span>
-                </button>
+                </AppButton>
 
                 <div
                     v-if="props.expanded && props.openedSectionId === item.id && item.children.length"
@@ -63,6 +64,7 @@ import { BookOpen, Box, CalendarDays, Circle, Package, ShoppingCart, type Lucide
 import { onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 
+import AppButton from '@/components/AppButton.vue'
 import { useMenuStore } from '@/stores/menu'
 
 const menu = useMenuStore()
@@ -137,22 +139,26 @@ onMounted(menu.loadMenu)
     width: 194px;
     align-items: center;
     padding: 0;
-    border: 0;
     border-radius: 7px;
-    background: transparent;
     color: var(--color-text);
     font: inherit;
     text-align: left;
     text-decoration: none;
-    cursor: pointer;
 }
 
 .application-menu-section-button,
 .application-menu-section-link {
     min-height: 40px;
+    justify-content: flex-start;
     font-size: 13px;
     font-weight: 600;
     white-space: nowrap;
+}
+
+.application-menu-section-button :deep(.app-button-content) {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0;
 }
 
 .application-menu-icon {
@@ -168,11 +174,12 @@ onMounted(menu.loadMenu)
     padding-right: 10px;
 }
 
-.application-menu-section-button:hover,
+.application-menu-section-button:hover:not(:disabled),
 .application-menu-link:hover,
 .application-menu-section-opened {
     background: var(--color-surface-hover);
     color: var(--color-text-strong);
+    filter: none;
 }
 
 .application-menu-children {

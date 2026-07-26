@@ -1,9 +1,12 @@
 <template>
     <div class="application-notifications">
-        <button
+        <AppButton
             :class="{ 'application-notifications-button-active': panelOpened }"
             class="application-notifications-button"
-            type="button"
+            icon-only
+            label="Notifications"
+            preset="ghost"
+            size="small"
             @click="togglePanel"
         >
             <Bell :size="17" />
@@ -11,7 +14,7 @@
             <span v-if="notifications.unreadCount" class="application-notifications-badge">
                 {{ formattedUnreadCount }}
             </span>
-        </button>
+        </AppButton>
 
         <AppSidePanel v-model:opened="panelOpened" width="440px">
             <div class="application-notifications-panel">
@@ -23,27 +26,36 @@
                     </div>
 
                     <div class="application-notifications-header-actions">
-                        <button
+                        <AppButton
                             v-if="notifications.unreadCount"
                             class="application-notifications-header-button"
-                            type="button"
+                            preset="ghost"
+                            size="small"
                             @click="notifications.markAllAsRead"
                         >
                             Mark all as read
-                        </button>
+                        </AppButton>
 
-                        <button
+                        <AppButton
                             v-if="notifications.items.length"
                             class="application-notifications-header-button application-notifications-clear"
-                            type="button"
+                            preset="ghost"
+                            size="small"
                             @click="clearNotifications"
                         >
                             Clear all
-                        </button>
+                        </AppButton>
 
-                        <button class="application-notifications-close" type="button" @click="closePanel">
+                        <AppButton
+                            class="application-notifications-close"
+                            icon-only
+                            label="Close notifications"
+                            preset="ghost"
+                            size="small"
+                            @click="closePanel"
+                        >
                             <X :size="18" />
-                        </button>
+                        </AppButton>
                     </div>
                 </header>
 
@@ -57,9 +69,9 @@
                         }"
                         class="application-notification"
                     >
-                        <button
+                        <AppButton
                             class="application-notification-read"
-                            type="button"
+                            preset="ghost"
                             @click="notifications.markAsRead(notification.id)"
                         >
                             <span
@@ -93,21 +105,25 @@
                             </span>
 
                             <span v-if="!notification.isRead" class="application-notification-indicator"></span>
-                        </button>
+                        </AppButton>
 
-                        <button
+                        <AppButton
                             class="application-notification-remove"
-                            type="button"
+                            icon-only
+                            label="Remove notification"
+                            preset="ghost"
+                            size="small"
                             @click="removeNotification(notification.id)"
                         >
                             <X :size="15" />
-                        </button>
+                        </AppButton>
 
                         <div class="application-notification-actions">
-                            <button
+                            <AppButton
                                 v-if="hasExpandableContent(notification)"
                                 class="application-notification-action"
-                                type="button"
+                                preset="ghost"
+                                size="small"
                                 @click="toggleNotificationDetails(notification.id)"
                             >
                                 <ChevronUp v-if="isNotificationExpanded(notification.id)" :size="14" />
@@ -115,19 +131,20 @@
                                 <ChevronDown v-else :size="14" />
 
                                 {{ isNotificationExpanded(notification.id) ? 'Hide details' : 'Show details' }}
-                            </button>
+                            </AppButton>
 
                             <span class="application-notification-actions-spacer"></span>
 
-                            <button
+                            <AppButton
                                 class="application-notification-action"
-                                type="button"
+                                preset="ghost"
+                                size="small"
                                 @click="copyNotification(notification)"
                             >
                                 <Copy :size="14" />
 
                                 Copy
-                            </button>
+                            </AppButton>
 
                             <RouterLink
                                 v-if="notification.route"
@@ -171,10 +188,11 @@ import {
 import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
+import AppButton from '@/components/AppButton.vue'
 import AppSidePanel from '@/components/AppSidePanel.vue'
+import { useFeedbackStore } from '@/stores/feedback'
 import { useNotificationsStore, type NotificationItem, type NotificationType } from '@/stores/notifications'
 import { copyText } from '@/utils/copyText'
-import { useFeedbackStore } from '@/stores/feedback'
 
 const notifications = useNotificationsStore()
 const feedback = useFeedbackStore()
@@ -286,20 +304,24 @@ function formatCreatedAt(createdAt: string): string {
 
 .application-notifications-button {
     position: relative;
-    display: flex;
     width: 32px;
-    height: 32px;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    border-radius: 7px;
-    background: transparent;
+    min-height: 32px;
     color: var(--color-text-muted);
-    cursor: pointer;
 }
 
-.application-notifications-button:hover,
+.application-notifications-button :deep(.app-button-content) {
+    position: static;
+    width: 17px;
+    height: 17px;
+}
+
+.application-notifications-button :deep(.app-button-content > svg) {
+    display: block;
+    flex-shrink: 0;
+    color: currentColor;
+}
+
+.application-notifications-button:hover:not(:disabled),
 .application-notifications-button-active {
     background: var(--color-surface-hover);
     color: var(--color-text-strong);
@@ -361,44 +383,30 @@ function formatCreatedAt(createdAt: string): string {
 }
 
 .application-notifications-header-button {
-    min-height: 30px;
-    padding: 0 7px;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
     color: var(--color-primary);
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
 }
 
-.application-notifications-header-button:hover {
+.application-notifications-header-button:hover:not(:disabled) {
     background: var(--color-surface-active);
+    color: var(--color-primary);
 }
 
 .application-notifications-clear {
     color: var(--color-error);
 }
 
-.application-notifications-clear:hover {
+.application-notifications-clear:hover:not(:disabled) {
     background: color-mix(in srgb, var(--color-error) 8%, transparent);
+    color: var(--color-error);
 }
 
 .application-notifications-close {
-    display: flex;
     width: 32px;
-    height: 32px;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    border-radius: 7px;
-    background: transparent;
+    min-height: 32px;
     color: var(--color-text-muted);
-    cursor: pointer;
 }
 
-.application-notifications-close:hover {
+.application-notifications-close:hover:not(:disabled) {
     background: var(--color-surface-hover);
     color: var(--color-text-strong);
 }
@@ -431,24 +439,29 @@ function formatCreatedAt(createdAt: string): string {
 }
 
 .application-notification-read {
-    display: grid;
     min-width: 0;
+    min-height: 0;
     grid-area: content;
+    justify-content: stretch;
+    padding: 10px 6px 6px 10px;
+    color: var(--color-text);
+    text-align: left;
+    white-space: normal;
+}
+
+.application-notification-read:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-text) 4%, transparent);
+    color: var(--color-text);
+    filter: none;
+}
+
+.application-notification-read :deep(.app-button-content) {
+    display: grid;
+    width: 100%;
+    min-width: 0;
     grid-template-columns: 40px minmax(0, 1fr) 8px;
     align-items: start;
     gap: 10px;
-    padding: 10px 6px 6px 10px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--color-text);
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
-}
-
-.application-notification-read:hover {
-    background: color-mix(in srgb, var(--color-text) 4%, transparent);
 }
 
 .application-notification-icon {
@@ -556,22 +569,14 @@ function formatCreatedAt(createdAt: string): string {
 }
 
 .application-notification-remove {
-    display: flex;
     grid-area: remove;
     width: 30px;
-    height: 30px;
-    align-items: center;
-    justify-content: center;
+    min-height: 30px;
     margin-top: 9px;
-    padding: 0;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
     color: var(--color-text-subtle);
-    cursor: pointer;
 }
 
-.application-notification-remove:hover {
+.application-notification-remove:hover:not(:disabled) {
     background: color-mix(in srgb, var(--color-error) 8%, transparent);
     color: var(--color-error);
 }
@@ -590,28 +595,31 @@ function formatCreatedAt(createdAt: string): string {
 }
 
 .application-notification-action {
+    min-height: 28px;
+    color: var(--color-primary);
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.application-notification-action:hover:not(:disabled) {
+    background: var(--color-surface-active);
+    color: var(--color-primary);
+    filter: none;
+}
+
+.application-notification-open {
     display: flex;
     min-height: 28px;
     align-items: center;
     gap: 4px;
     padding: 0 7px;
-    border: 0;
     border-radius: 6px;
-    background: transparent;
-    color: var(--color-primary);
-    font: inherit;
-    font-size: 11px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.application-notification-action:hover {
-    background: var(--color-surface-active);
-}
-
-.application-notification-open {
     font-weight: 650;
+}
+
+.application-notification-open:hover {
+    background: var(--color-surface-active);
 }
 
 .application-notifications-empty {

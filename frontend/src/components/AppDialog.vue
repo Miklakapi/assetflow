@@ -23,14 +23,18 @@
             @close="handleNativeClose"
         >
             <header ref="headerRef" class="application-dialog-header" @pointerdown="draggable.start">
-                <button
+                <AppButton
                     v-if="closable && closeButtonOnLeft"
                     class="application-dialog-close"
-                    type="button"
+                    icon-only
+                    label="Close dialog"
+                    preset="ghost"
+                    size="small"
+                    @pointerdown.stop
                     @click="close"
                 >
                     <X :size="17" />
-                </button>
+                </AppButton>
 
                 <span v-else class="application-dialog-header-spacer"></span>
 
@@ -42,14 +46,18 @@
                     </slot>
                 </div>
 
-                <button
+                <AppButton
                     v-if="closable && !closeButtonOnLeft"
                     class="application-dialog-close"
-                    type="button"
+                    icon-only
+                    label="Close dialog"
+                    preset="ghost"
+                    size="small"
+                    @pointerdown.stop
                     @click="close"
                 >
                     <X :size="17" />
-                </button>
+                </AppButton>
 
                 <span v-else class="application-dialog-header-spacer"></span>
             </header>
@@ -73,6 +81,7 @@
 import { X } from '@lucide/vue'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
+import AppButton from '@/components/AppButton.vue'
 import { useDraggable } from '@/composables/useDraggable'
 import { useFocusTrap } from '@/composables/useFocusTrap'
 import { useModalLayer } from '@/composables/useModalLayer'
@@ -345,22 +354,15 @@ onBeforeUnmount(() => {
 }
 
 .application-dialog-close {
-    display: flex;
     width: 28px;
-    height: 28px;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
+    min-height: 28px;
     color: var(--color-text-muted);
-    cursor: pointer;
 }
 
-.application-dialog-close:hover {
+.application-dialog-close:hover:not(:disabled) {
     background: var(--color-surface-hover);
     color: var(--color-text-strong);
+    filter: none;
 }
 
 .application-dialog-content {

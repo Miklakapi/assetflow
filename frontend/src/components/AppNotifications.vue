@@ -23,9 +23,16 @@
                     <pre v-if="toast.details" class="notification-details">{{ toast.details }}</pre>
                 </div>
 
-                <button class="notification-close" type="button" @click="notifications.removeToast(toast.id)">
+                <AppButton
+                    class="notification-close"
+                    icon-only
+                    label="Close notification"
+                    preset="ghost"
+                    size="small"
+                    @click="notifications.removeToast(toast.id)"
+                >
                     <X :size="17" />
-                </button>
+                </AppButton>
             </article>
         </TransitionGroup>
     </Teleport>
@@ -34,6 +41,7 @@
 <script setup lang="ts">
 import { CheckCircle2, CircleAlert, Info, TriangleAlert, X, type LucideIcon } from '@lucide/vue'
 
+import AppButton from '@/components/AppButton.vue'
 import { useNotificationsStore, type NotificationType } from '@/stores/notifications'
 
 const notifications = useNotificationsStore()
@@ -154,26 +162,25 @@ const notificationIcons: Record<NotificationType, LucideIcon> = {
 }
 
 .notification-close {
-    display: flex;
     width: 28px;
-    height: 28px;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: currentColor;
-    cursor: pointer;
+    min-height: 28px;
+    color: var(--notification-color);
 }
 
-.notification-close:hover {
+.notification-close:hover:not(:disabled) {
     background: color-mix(in srgb, var(--notification-color) 8%, transparent);
+    color: var(--notification-color);
+    filter: none;
 }
 
 .notification-close:focus-visible {
+    box-shadow: none;
     outline: 2px solid color-mix(in srgb, var(--notification-color) 40%, transparent);
     outline-offset: 2px;
+}
+
+.notification-close :deep(svg) {
+    color: var(--notification-color);
 }
 
 .notification-success {

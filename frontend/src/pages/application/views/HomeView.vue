@@ -6,7 +6,9 @@
             <h2 class="home-section-title">Temporary notifications</h2>
 
             <div class="home-actions">
-                <button class="home-button home-button-success" type="button" @click="showSuccess">Success</button>
+                <button v-log="'Test'" class="home-button home-button-success" type="button" @click="showSuccess">
+                    Success
+                </button>
 
                 <button class="home-button home-button-info" type="button" @click="showInfo">Info</button>
 

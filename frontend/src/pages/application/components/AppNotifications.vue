@@ -186,7 +186,6 @@ import {
     type LucideIcon,
 } from '@lucide/vue'
 import { computed, ref } from 'vue'
-import { RouterLink } from 'vue-router'
 
 import AppButton from '@/components/AppButton.vue'
 import AppSidePanel from '@/components/AppSidePanel.vue'

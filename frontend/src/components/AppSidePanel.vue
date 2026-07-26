@@ -2,7 +2,7 @@
     <Teleport to="body">
         <Transition name="application-side-panel">
             <div v-if="opened" class="application-side-panel-overlay" @click.self="close">
-                <aside ref="panelRef" :style="{ width: props.width }" class="application-side-panel" tabindex="-1">
+                <aside ref="panelRef" :style="{ width: width }" class="application-side-panel" tabindex="-1">
                     <slot />
                 </aside>
             </div>
@@ -16,7 +16,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useFocusTrap } from '@/composables/useFocusTrap'
 import { useModalLayer } from '@/composables/useModalLayer'
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         width?: string
     }>(),

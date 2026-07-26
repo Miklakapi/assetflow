@@ -3,7 +3,7 @@
         <dialog
             ref="dialogRef"
             :class="[
-                `application-dialog-position-${props.position}`,
+                `application-dialog-position-${position}`,
                 {
                     'application-dialog-header-mac': closeButtonOnLeft,
                     'application-dialog-dragging': draggable.dragging.value,
@@ -11,8 +11,8 @@
             ]"
             :style="[
                 {
-                    width: props.width,
-                    height: props.height,
+                    width: width,
+                    height: height,
                 },
                 draggable.style.value,
             ]"
@@ -41,7 +41,7 @@
                 <div class="application-dialog-header-content">
                     <slot name="header">
                         <div class="application-dialog-title">
-                            {{ props.title }}
+                            {{ title }}
                         </div>
                     </slot>
                 </div>

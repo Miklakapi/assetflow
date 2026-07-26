@@ -1,17 +1,17 @@
 <template>
-    <div :class="`app-alert-${props.type}`" class="app-alert">
-        <component :is="alertIcons[props.type]" :size="18" :stroke-width="2" class="app-alert-icon" />
+    <div :class="`app-alert-${type}`" class="app-alert">
+        <component :is="alertIcons[type]" :size="18" :stroke-width="2" class="app-alert-icon" />
 
         <div class="app-alert-content">
             <div class="app-alert-title">
-                {{ props.title }}
+                {{ title }}
             </div>
 
-            <div v-if="props.message" class="app-alert-message">
-                {{ props.message }}
+            <div v-if="message" class="app-alert-message">
+                {{ message }}
             </div>
 
-            <pre v-if="props.details" class="app-alert-details">{{ props.details }}</pre>
+            <pre v-if="details" class="app-alert-details">{{ details }}</pre>
         </div>
 
         <div class="app-alert-actions">
@@ -22,7 +22,7 @@
             </AppButton>
 
             <AppButton
-                v-if="props.dismissible"
+                v-if="dismissible"
                 class="app-alert-action"
                 icon-only
                 label="Dismiss alert"

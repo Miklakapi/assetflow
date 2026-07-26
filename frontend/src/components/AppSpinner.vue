@@ -1,14 +1,14 @@
 <template>
     <span
         :style="spinnerStyle"
-        :aria-hidden="props.label ? undefined : true"
-        :role="props.label ? 'status' : undefined"
+        :aria-hidden="label ? undefined : true"
+        :role="label ? 'status' : undefined"
         class="app-spinner"
     >
         <svg class="app-spinner-icon" viewBox="0 0 24 24">
-            <circle :stroke-width="props.thickness" class="app-spinner-track" cx="12" cy="12" r="9" />
+            <circle :stroke-width="thickness" class="app-spinner-track" cx="12" cy="12" r="9" />
 
-            <circle :stroke-width="props.thickness" class="app-spinner-progress" cx="12" cy="12" r="9" />
+            <circle :stroke-width="thickness" class="app-spinner-progress" cx="12" cy="12" r="9" />
         </svg>
     </span>
 </template>

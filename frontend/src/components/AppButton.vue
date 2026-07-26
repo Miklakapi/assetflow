@@ -1,16 +1,16 @@
 <template>
     <button
         :class="[
-            `app-button-${props.preset}`,
-            `app-button-${props.size}`,
+            `app-button-${preset}`,
+            `app-button-${size}`,
             {
-                'app-button-icon-only': props.iconOnly,
+                'app-button-icon-only': iconOnly,
                 'app-button-loading': isLoading,
             },
         ]"
-        :type="props.type"
+        :type="type"
         :disabled="isDisabled"
-        :title="props.iconOnly ? props.label : undefined"
+        :title="iconOnly ? label : undefined"
         class="app-button"
         @click="handleClick"
     >

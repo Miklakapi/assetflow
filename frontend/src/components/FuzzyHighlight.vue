@@ -1,6 +1,6 @@
 <template>
     <span>
-        <template v-for="(character, index) in props.value" :key="index">
+        <template v-for="(character, index) in value" :key="index">
             <strong v-if="matchedIndexesSet.has(index)">
                 {{ character }}
             </strong>

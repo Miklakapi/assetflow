@@ -11,23 +11,23 @@
                 <RouterLink
                     v-if="item.route"
                     :to="item.route"
-                    :title="props.expanded ? undefined : item.label"
+                    :title="expanded ? undefined : item.label"
                     class="application-menu-link application-menu-section-link"
                 >
                     <span class="application-menu-icon">
                         <component :is="getMenuIcon(item.icon)" :size="19" :stroke-width="1.8" />
                     </span>
 
-                    <span v-if="props.expanded" class="application-menu-label">
+                    <span v-if="expanded" class="application-menu-label">
                         {{ item.label }}
                     </span>
                 </RouterLink>
 
                 <AppButton
                     v-else
-                    :class="{ 'application-menu-section-opened': props.openedSectionId === item.id }"
+                    :class="{ 'application-menu-section-opened': openedSectionId === item.id }"
                     :label="item.label"
-                    :title="props.expanded ? undefined : item.label"
+                    :title="expanded ? undefined : item.label"
                     class="application-menu-section-button"
                     preset="ghost"
                     @click.stop="openSection(item.id)"
@@ -36,13 +36,13 @@
                         <component :is="getMenuIcon(item.icon)" :size="19" :stroke-width="1.8" />
                     </span>
 
-                    <span v-if="props.expanded" class="application-menu-label">
+                    <span v-if="expanded" class="application-menu-label">
                         {{ item.label }}
                     </span>
                 </AppButton>
 
                 <div
-                    v-if="props.expanded && props.openedSectionId === item.id && item.children.length"
+                    v-if="expanded && openedSectionId === item.id && item.children.length"
                     class="application-menu-children"
                 >
                     <RouterLink
@@ -62,7 +62,6 @@
 <script setup lang="ts">
 import { BookOpen, Box, CalendarDays, Circle, Package, ShoppingCart, type LucideIcon } from '@lucide/vue'
 import { onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
 
 import AppButton from '@/components/AppButton.vue'
 import { useMenuStore } from '@/stores/menu'

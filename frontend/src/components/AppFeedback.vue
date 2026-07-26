@@ -1,15 +1,9 @@
 <template>
     <Teleport to="body">
-        <div ref="popoverRef" :style="popoverStyle" class="app-feedback-popover" popover="manual">
-            <Transition
-                name="app-feedback"
-                mode="out-in"
-                @before-enter="prepareFeedbackPosition"
-                @after-enter="correctFeedbackPosition"
-                @after-leave="handleAfterLeave"
-            >
-                <div v-if="feedback.item" ref="feedbackRef" :key="feedback.item.id" class="app-feedback">
-                    <Info :size="14" :stroke-width="2.2" class="app-feedback-icon" />
+        <div ref="popoverRef" class="app-feedback-popover" popover="manual">
+            <Transition name="app-feedback" mode="out-in" @after-leave="handleAfterLeave">
+                <div v-if="feedback.item" :key="feedback.item.id" class="app-feedback">
+                    <Info :size="20" :stroke-width="2.2" class="app-feedback-icon" />
 
                     <span class="app-feedback-message">
                         {{ feedback.item.message }}
@@ -22,46 +16,13 @@
 
 <script setup lang="ts">
 import { Info } from '@lucide/vue'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 
 import { useFeedbackStore } from '@/stores/feedback'
 
 const feedback = useFeedbackStore()
 
 const popoverRef = ref<HTMLElement | null>(null)
-const feedbackRef = ref<HTMLElement | null>(null)
-const positionX = ref(0)
-const positionY = ref(0)
-const isTouchDevice = ref(false)
-
-const touchDeviceMedia = window.matchMedia('(hover: none) and (pointer: coarse)')
-
-const popoverStyle = computed(() => {
-    if (isTouchDevice.value) {
-        return {
-            top: 'calc(env(safe-area-inset-top) + 12px)',
-            left: '50%',
-            transform: 'translateX(-50%)',
-        }
-    }
-
-    return {
-        left: `${positionX.value}px`,
-        top: `${positionY.value}px`,
-    }
-})
-
-function handlePointerMove(event: PointerEvent): void {
-    if (isTouchDevice.value) {
-        return
-    }
-
-    feedback.setPointerPosition(event.clientX, event.clientY)
-}
-
-function handleTouchDeviceChange(event: MediaQueryListEvent): void {
-    isTouchDevice.value = event.matches
-}
 
 function openPopover(): void {
     const popover = popoverRef.value
@@ -71,53 +32,6 @@ function openPopover(): void {
     }
 
     popover.showPopover()
-}
-
-function prepareFeedbackPosition(): void {
-    const item = feedback.item
-
-    if (!item || isTouchDevice.value) {
-        return
-    }
-
-    positionX.value = item.x + 12
-    positionY.value = item.y + 12
-}
-
-async function correctFeedbackPosition(): Promise<void> {
-    const item = feedback.item
-
-    if (!item || isTouchDevice.value) {
-        return
-    }
-
-    const itemId = item.id
-
-    await nextTick()
-
-    if (feedback.item?.id !== itemId) {
-        return
-    }
-
-    const element = feedbackRef.value
-
-    if (!element) {
-        return
-    }
-
-    const rect = element.getBoundingClientRect()
-    const viewportPadding = 8
-
-    if (rect.right > window.innerWidth - viewportPadding) {
-        positionX.value = item.x - rect.width - 12
-    }
-
-    if (rect.bottom > window.innerHeight - viewportPadding) {
-        positionY.value = item.y - rect.height - 12
-    }
-
-    positionX.value = Math.max(viewportPadding, positionX.value)
-    positionY.value = Math.max(viewportPadding, positionY.value)
 }
 
 function handleAfterLeave(): void {
@@ -149,19 +63,7 @@ watch(
     },
 )
 
-onMounted(() => {
-    isTouchDevice.value = touchDeviceMedia.matches
-
-    window.addEventListener('pointermove', handlePointerMove, {
-        passive: true,
-    })
-
-    touchDeviceMedia.addEventListener('change', handleTouchDeviceChange)
-})
-
 onBeforeUnmount(() => {
-    window.removeEventListener('pointermove', handlePointerMove)
-    touchDeviceMedia.removeEventListener('change', handleTouchDeviceChange)
     hidePopover()
 })
 </script>
@@ -169,8 +71,11 @@ onBeforeUnmount(() => {
 <style scoped>
 .app-feedback-popover {
     position: fixed;
+    inset: auto;
+    top: calc(env(safe-area-inset-top) + 24px);
+    left: 50%;
     width: max-content;
-    max-width: calc(100vw - 16px);
+    max-width: calc(100vw - 32px);
     height: auto;
     margin: 0;
     padding: 0;
@@ -178,31 +83,31 @@ onBeforeUnmount(() => {
     border: 0;
     background: transparent;
     pointer-events: none;
+    transform: translateX(-50%);
 }
 
 .app-feedback {
     display: flex;
-    max-width: min(280px, calc(100vw - 16px));
-    min-height: 28px;
+    max-width: min(520px, calc(100vw - 32px));
+    min-height: 56px;
     align-items: center;
-    gap: 6px;
-    padding: 5px 8px;
-    border: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
-    border-radius: 7px;
+    gap: 12px;
+    padding: 14px 22px;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 34%, transparent);
+    border-radius: 16px;
     background:
         linear-gradient(
-            color-mix(in srgb, var(--color-primary) 8%, transparent),
-            color-mix(in srgb, var(--color-primary) 3%, transparent)
+            135deg,
+            color-mix(in srgb, var(--color-primary) 13%, transparent),
+            color-mix(in srgb, var(--color-primary) 5%, transparent)
         ),
-        color-mix(in srgb, var(--color-surface) 96%, transparent);
+        var(--color-surface);
     box-shadow:
-        0 8px 20px rgb(var(--color-shadow) / 18%),
-        0 0 0 2px color-mix(in srgb, var(--color-primary) 7%, transparent);
+        0 18px 44px rgb(var(--color-shadow) / 24%),
+        0 0 0 3px color-mix(in srgb, var(--color-primary) 9%, transparent);
     color: var(--color-primary);
-    backdrop-filter: blur(8px) saturate(120%);
-    -webkit-backdrop-filter: blur(8px) saturate(120%);
     pointer-events: none;
-    transform-origin: center;
+    transform-origin: top center;
 }
 
 .app-feedback-icon {
@@ -212,32 +117,32 @@ onBeforeUnmount(() => {
 .app-feedback-message {
     overflow: hidden;
     color: var(--color-text-strong);
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
-    line-height: 16px;
+    line-height: 20px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .app-feedback-enter-active {
-    animation: app-feedback-enter 150ms ease-out;
+    animation: app-feedback-enter 180ms ease-out;
 }
 
 .app-feedback-leave-active {
     transition:
-        opacity 160ms ease,
-        transform 160ms ease;
+        opacity 150ms ease,
+        transform 150ms ease;
 }
 
 .app-feedback-leave-to {
     opacity: 0;
-    transform: scale(0.82);
+    transform: translateY(-8px) scale(0.96);
 }
 
 @keyframes app-feedback-enter {
     from {
         opacity: 0;
-        transform: translateY(4px) scale(0.94);
+        transform: translateY(-12px) scale(0.94);
     }
 
     to {
@@ -246,9 +151,20 @@ onBeforeUnmount(() => {
     }
 }
 
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+@media (max-width: 560px) {
+    .app-feedback-popover {
+        top: calc(env(safe-area-inset-top) + 12px);
+    }
+
     .app-feedback {
-        background: var(--color-surface);
+        min-height: 50px;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 14px;
+    }
+
+    .app-feedback-message {
+        font-size: 13px;
     }
 }
 

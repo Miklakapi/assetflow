@@ -4,8 +4,6 @@ import { ref } from 'vue'
 export interface FeedbackItem {
     id: number
     message: string
-    x: number
-    y: number
 }
 
 export interface FeedbackOptions {
@@ -19,8 +17,6 @@ export const useFeedbackStore = defineStore('feedback', () => {
 
     let nextId = 1
     let feedbackTimeout: number | null = null
-    let pointerX = window.innerWidth / 2
-    let pointerY = 24
 
     function show(message: string, options: FeedbackOptions = {}): void {
         clearFeedbackTimeout()
@@ -32,8 +28,6 @@ export const useFeedbackStore = defineStore('feedback', () => {
         item.value = {
             id,
             message,
-            x: pointerX,
-            y: pointerY,
         }
 
         feedbackTimeout = window.setTimeout(() => {
@@ -44,11 +38,6 @@ export const useFeedbackStore = defineStore('feedback', () => {
             feedbackTimeout = null
             item.value = null
         }, options.duration ?? defaultDuration)
-    }
-
-    function setPointerPosition(x: number, y: number): void {
-        pointerX = x
-        pointerY = y
     }
 
     function clear(): void {
@@ -68,7 +57,6 @@ export const useFeedbackStore = defineStore('feedback', () => {
     return {
         item,
         show,
-        setPointerPosition,
         clear,
     }
 })

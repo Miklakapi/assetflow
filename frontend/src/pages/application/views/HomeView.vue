@@ -46,11 +46,11 @@
                     <span class="home-button-example-label">Sizes</span>
 
                     <div class="home-actions home-actions-aligned">
-                        <AppButton size="small" preset="primary">Small</AppButton>
+                        <AppButton preset="primary" size="small">Small</AppButton>
 
-                        <AppButton size="medium" preset="primary">Medium</AppButton>
+                        <AppButton preset="primary" size="medium">Medium</AppButton>
 
-                        <AppButton size="large" preset="primary">Large</AppButton>
+                        <AppButton preset="primary" size="large">Large</AppButton>
                     </div>
                 </div>
 
@@ -133,17 +133,15 @@
             <h2 class="home-section-title">Temporary notifications</h2>
 
             <div class="home-actions">
-                <button v-log="'Test'" class="home-button home-button-success" type="button" @click="showSuccess">
-                    Success
-                </button>
+                <AppButton v-log="'Test'" preset="success" @click="showSuccess">Success</AppButton>
 
-                <button class="home-button home-button-info" type="button" @click="showInfo">Info</button>
+                <AppButton preset="info" @click="showInfo">Info</AppButton>
 
-                <button class="home-button home-button-warning" type="button" @click="showWarning">Warning</button>
+                <AppButton preset="warning" @click="showWarning">Warning</AppButton>
 
-                <button class="home-button home-button-error" type="button" @click="showError">Error</button>
+                <AppButton preset="danger" @click="showError">Error</AppButton>
 
-                <button class="home-button home-button-error" type="button" @click="showLongError">Long error</button>
+                <AppButton preset="danger" @click="showLongError">Long error</AppButton>
             </div>
         </div>
 
@@ -151,21 +149,15 @@
             <h2 class="home-section-title">Saved notifications</h2>
 
             <div class="home-actions">
-                <button class="home-button home-button-success" type="button" @click="showSavedSuccess">
-                    Saved success
-                </button>
+                <AppButton preset="success" @click="showSavedSuccess">Saved success</AppButton>
 
-                <button class="home-button home-button-info" type="button" @click="showSavedInfo">Saved info</button>
+                <AppButton preset="info" @click="showSavedInfo">Saved info</AppButton>
 
-                <button class="home-button home-button-warning" type="button" @click="showSavedWarning">
-                    Saved warning
-                </button>
+                <AppButton preset="warning" @click="showSavedWarning">Saved warning</AppButton>
 
-                <button class="home-button home-button-error" type="button" @click="showSavedError">Saved error</button>
+                <AppButton preset="danger" @click="showSavedError">Saved error</AppButton>
 
-                <button class="home-button home-button-error" type="button" @click="showSavedLongError">
-                    Saved long error
-                </button>
+                <AppButton preset="danger" @click="showSavedLongError">Saved long error</AppButton>
             </div>
         </div>
 
@@ -173,27 +165,17 @@
             <h2 class="home-section-title">Dialogs</h2>
 
             <div class="home-actions">
-                <button class="home-button home-button-primary" type="button" @click="dialogOpened = true">
-                    Dialog
-                </button>
+                <AppButton preset="primary" @click="dialogOpened = true">Dialog</AppButton>
 
-                <button class="home-button home-button-primary" type="button" @click="modalOpened = true">Modal</button>
+                <AppButton preset="primary" @click="modalOpened = true">Modal</AppButton>
 
-                <button class="home-button home-button-primary" type="button" @click="blockingDialogOpened = true">
-                    Blocking
-                </button>
+                <AppButton preset="primary" @click="blockingDialogOpened = true">Blocking</AppButton>
 
-                <button class="home-button home-button-primary" type="button" @click="sizedDialogOpened = true">
-                    Custom size
-                </button>
+                <AppButton preset="primary" @click="sizedDialogOpened = true">Custom size</AppButton>
 
-                <button class="home-button home-button-primary" type="button" @click="positionedDialogOpened = true">
-                    Top position
-                </button>
+                <AppButton preset="primary" @click="positionedDialogOpened = true">Top position</AppButton>
 
-                <button class="home-button home-button-primary" type="button" @click="openAlertsDialog">
-                    Dialog alerts
-                </button>
+                <AppButton preset="primary" @click="openAlertsDialog">Dialog alerts</AppButton>
             </div>
         </div>
 
@@ -206,9 +188,7 @@
             </div>
 
             <template #footer>
-                <button class="popup-button popup-button-primary" type="button" @click="dialogOpened = false">
-                    Close
-                </button>
+                <AppButton preset="primary" @click="dialogOpened = false">Close</AppButton>
             </template>
         </AppDialog>
 
@@ -226,13 +206,9 @@
             </div>
 
             <template #footer>
-                <button class="popup-button popup-button-secondary" type="button" @click="modalOpened = false">
-                    Cancel
-                </button>
+                <AppButton preset="secondary" @click="modalOpened = false">Cancel</AppButton>
 
-                <button class="popup-button popup-button-primary" type="button" @click="modalOpened = false">
-                    Save
-                </button>
+                <AppButton preset="primary" @click="modalOpened = false">Save</AppButton>
             </template>
         </AppDialog>
 
@@ -245,13 +221,9 @@
             </div>
 
             <template #footer>
-                <button class="popup-button popup-button-secondary" type="button" @click="blockingDialogOpened = false">
-                    Continue editing
-                </button>
+                <AppButton preset="secondary" @click="blockingDialogOpened = false">Continue editing</AppButton>
 
-                <button class="popup-button popup-button-primary" type="button" @click="blockingDialogOpened = false">
-                    Leave without saving
-                </button>
+                <AppButton preset="danger" @click="blockingDialogOpened = false">Leave without saving</AppButton>
             </template>
         </AppDialog>
 
@@ -266,9 +238,7 @@
             </div>
 
             <template #footer>
-                <button class="popup-button popup-button-primary" type="button" @click="sizedDialogOpened = false">
-                    Close
-                </button>
+                <AppButton preset="primary" @click="sizedDialogOpened = false">Close</AppButton>
             </template>
         </AppDialog>
 
@@ -284,13 +254,11 @@
                     This dialog starts near the top of the screen and can still be moved freely using its header.
                 </p>
 
-                <button class="popup-button popup-button-secondary" type="button">Focusable action</button>
+                <AppButton preset="secondary">Focusable action</AppButton>
             </div>
 
             <template #footer>
-                <button class="popup-button popup-button-primary" type="button" @click="positionedDialogOpened = false">
-                    Done
-                </button>
+                <AppButton preset="primary" @click="positionedDialogOpened = false">Done</AppButton>
             </template>
         </AppDialog>
 
@@ -311,27 +279,23 @@
             <div v-else class="popup-alerts-empty">All alerts have been dismissed.</div>
 
             <template #footer>
-                <button class="popup-button popup-button-secondary" type="button" @click="resetAlerts">
-                    Reset alerts
-                </button>
+                <AppButton preset="secondary" @click="resetAlerts">Reset alerts</AppButton>
 
-                <button class="popup-button popup-button-primary" type="button" @click="alertsDialogOpened = false">
-                    Close
-                </button>
+                <AppButton preset="primary" @click="alertsDialogOpened = false">Close</AppButton>
             </template>
         </AppDialog>
     </section>
 </template>
 
 <script setup lang="ts">
+import { Ellipsis, Plus, Trash2 } from '@lucide/vue'
 import { ref } from 'vue'
 
 import AppAlert from '@/components/AppAlert.vue'
-import AppDialog from '@/components/AppDialog.vue'
 import AppButton from '@/components/AppButton.vue'
+import AppDialog from '@/components/AppDialog.vue'
 import { useFeedbackStore } from '@/stores/feedback'
 import { useNotificationsStore, type NotificationType } from '@/stores/notifications'
-import { Ellipsis, Plus, Trash2 } from '@lucide/vue'
 
 interface AlertItem {
     id: number
@@ -351,7 +315,6 @@ const sizedDialogOpened = ref(false)
 const positionedDialogOpened = ref(false)
 const alertsDialogOpened = ref(false)
 const manualLoading = ref(false)
-
 const alerts = ref<AlertItem[]>([])
 
 const defaultAlerts: AlertItem[] = [
@@ -554,49 +517,33 @@ function wait(duration: number): Promise<void> {
     gap: 8px;
 }
 
-.home-button {
-    min-height: 32px;
-    padding: 0 12px;
-    border: 1px solid transparent;
-    border-radius: 7px;
-    background: var(--color-surface);
-    font-size: 13px;
-    font-weight: 550;
-    cursor: pointer;
+.home-button-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-.home-button:hover {
-    filter: brightness(0.97);
+.home-button-example {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.home-button-primary {
-    border-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
-    background: color-mix(in srgb, var(--color-primary) 9%, transparent);
+.home-button-example-label {
+    color: var(--color-text-muted);
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.home-actions-aligned {
+    align-items: center;
+}
+
+.home-spinner-examples {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     color: var(--color-primary);
-}
-
-.home-button-success {
-    border-color: color-mix(in srgb, var(--color-success) 25%, transparent);
-    background: color-mix(in srgb, var(--color-success) 9%, transparent);
-    color: var(--color-success);
-}
-
-.home-button-info {
-    border-color: color-mix(in srgb, var(--color-info) 25%, transparent);
-    background: color-mix(in srgb, var(--color-info) 9%, transparent);
-    color: var(--color-info);
-}
-
-.home-button-warning {
-    border-color: color-mix(in srgb, var(--color-warning) 25%, transparent);
-    background: color-mix(in srgb, var(--color-warning) 9%, transparent);
-    color: var(--color-warning);
-}
-
-.home-button-error {
-    border-color: color-mix(in srgb, var(--color-error) 25%, transparent);
-    background: color-mix(in srgb, var(--color-error) 9%, transparent);
-    color: var(--color-error);
 }
 
 .popup-example {
@@ -654,42 +601,5 @@ function wait(duration: number): Promise<void> {
 .popup-alerts-empty {
     color: var(--color-text-muted);
     font-size: 12px;
-}
-
-.popup-button {
-    min-height: 34px;
-    padding: 0 13px;
-    border: 1px solid transparent;
-    border-radius: 7px;
-    font-size: 12px;
-    font-weight: 650;
-    cursor: pointer;
-}
-
-.popup-button-primary {
-    border-color: var(--color-primary);
-    background: var(--color-primary);
-    color: var(--color-primary-contrast);
-}
-
-.popup-button-primary:hover {
-    background: var(--color-primary-hover);
-}
-
-.popup-button-secondary {
-    border-color: var(--color-border);
-    background: var(--color-surface);
-    color: var(--color-text);
-}
-
-.popup-button-secondary:hover {
-    background: var(--color-surface-hover);
-}
-
-.home-spinner-examples {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    color: var(--color-primary);
 }
 </style>

@@ -68,7 +68,7 @@ import { useMenuStore } from '@/stores/menu'
 
 const menu = useMenuStore()
 
-const props = defineProps<{
+defineProps<{
     expanded: boolean
     openedSectionId: string | null
 }>()

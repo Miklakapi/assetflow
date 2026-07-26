@@ -25,18 +25,6 @@ export function useFocusTrap(containerRef: Ref<HTMLElement | null>) {
         )
     }
 
-    function isFocusableElement(element: HTMLElement): boolean {
-        if (element.closest('[inert]')) {
-            return false
-        }
-
-        if (element.getAttribute('aria-hidden') === 'true') {
-            return false
-        }
-
-        return element.getClientRects().length > 0
-    }
-
     function focusFirstElement(): void {
         const firstFocusableElement = getFocusableElements()[0]
 
@@ -126,4 +114,16 @@ export function useFocusTrap(containerRef: Ref<HTMLElement | null>) {
         focusFirstElement,
         handleKeydown,
     }
+}
+
+function isFocusableElement(element: HTMLElement): boolean {
+    if (element.closest('[inert]')) {
+        return false
+    }
+
+    if (element.getAttribute('aria-hidden') === 'true') {
+        return false
+    }
+
+    return element.getClientRects().length > 0
 }

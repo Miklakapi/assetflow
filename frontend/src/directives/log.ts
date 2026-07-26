@@ -8,6 +8,7 @@ const logDirective: ObjectDirective<HTMLElement, unknown> = {
         values.set(element, binding.value)
 
         const listener = () => {
+            // oxlint-disable-next-line no-console
             console.log(values.get(element))
         }
 

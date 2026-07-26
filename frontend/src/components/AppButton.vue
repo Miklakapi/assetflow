@@ -26,10 +26,9 @@
 import { computed, ref } from 'vue'
 
 import AppSpinner from '@/components/AppSpinner.vue'
-import { useConfirmStore } from '@/stores/confirm'
-import type { ConfirmOptions } from '@/stores/confirm'
+import { useConfirmStore, type ConfirmOptions } from '@/stores/confirm'
 
-const confirm = useConfirmStore()
+const confirmStore = useConfirmStore()
 
 const props = withDefaults(
     defineProps<{
@@ -115,10 +114,10 @@ async function confirmAction(): Promise<boolean> {
     }
 
     if (props.confirm === true) {
-        return confirm.open()
+        return confirmStore.open()
     }
 
-    return confirm.open(props.confirm)
+    return confirmStore.open(props.confirm)
 }
 </script>
 

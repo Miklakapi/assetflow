@@ -208,14 +208,6 @@ export function useDraggable(elementRef: Ref<HTMLElement | null>, options: UseDr
         return boundary.value?.getBoundingClientRect() ?? null
     }
 
-    function clamp(value: number, minimum: number, maximum: number): number {
-        if (minimum > maximum) {
-            return minimum
-        }
-
-        return Math.min(Math.max(value, minimum), maximum)
-    }
-
     onBeforeUnmount(stop)
 
     return {
@@ -229,4 +221,12 @@ export function useDraggable(elementRef: Ref<HTMLElement | null>, options: UseDr
         reset,
         setPosition,
     }
+}
+
+function clamp(value: number, minimum: number, maximum: number): number {
+    if (minimum > maximum) {
+        return minimum
+    }
+
+    return Math.min(Math.max(value, minimum), maximum)
 }

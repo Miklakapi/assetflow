@@ -357,9 +357,7 @@ function removeAlert(id: number): void {
 }
 
 function resetAlerts(): void {
-    alerts.value = defaultAlerts.map((alert) => ({
-        ...alert,
-    }))
+    alerts.value = [...defaultAlerts]
 }
 
 function showSuccess(): void {

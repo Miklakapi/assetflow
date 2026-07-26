@@ -127,6 +127,7 @@ async function confirmAction(): Promise<boolean> {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     border: 1px solid transparent;
     border-radius: 7px;
     font-family: inherit;
@@ -135,6 +136,7 @@ async function confirmAction(): Promise<boolean> {
     white-space: nowrap;
     cursor: pointer;
     transition:
+        transform 70ms ease,
         border-color 120ms ease,
         background-color 120ms ease,
         color 120ms ease,
@@ -142,8 +144,35 @@ async function confirmAction(): Promise<boolean> {
         opacity 120ms ease;
 }
 
+.app-button::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: currentColor;
+    content: '';
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(12);
+    transition:
+        transform 420ms ease-out,
+        opacity 520ms ease-out;
+}
+
 .app-button:hover:not(:disabled) {
     filter: brightness(0.97);
+}
+
+.app-button:active:not(:disabled) {
+    transform: translateY(1px) scale(0.98);
+}
+
+.app-button:active:not(:disabled)::after {
+    opacity: 0.18;
+    transform: translate(-50%, -50%) scale(0);
+    transition: none;
 }
 
 .app-button:focus-visible {
@@ -238,6 +267,8 @@ async function confirmAction(): Promise<boolean> {
 }
 
 .app-button-content {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -250,6 +281,7 @@ async function confirmAction(): Promise<boolean> {
 
 .app-button-spinner {
     position: absolute;
+    z-index: 1;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -258,6 +290,14 @@ async function confirmAction(): Promise<boolean> {
 @media (prefers-reduced-motion: reduce) {
     .app-button {
         transition: none;
+    }
+
+    .app-button::after {
+        display: none;
+    }
+
+    .app-button:active:not(:disabled) {
+        transform: none;
     }
 }
 </style>

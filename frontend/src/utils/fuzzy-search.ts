@@ -22,9 +22,10 @@ interface FuzzyMatch {
 
 export function fuzzySearch<T>(items: T[], query: string, options: FuzzySearchOptions<T>): FuzzySearchResult<T>[] {
     const normalizedQuery = normalizeSearchValue(query).value
+    const limit = options.limit ?? items.length
 
     if (!normalizedQuery) {
-        return items.slice(0, options.limit).map((item) => ({
+        return items.slice(0, limit).map((item) => ({
             item,
             value: options.getValue(item),
             score: 0,
@@ -62,7 +63,7 @@ export function fuzzySearch<T>(items: T[], query: string, options: FuzzySearchOp
         return firstResult.value.localeCompare(secondResult.value)
     })
 
-    return results.slice(0, options.limit)
+    return results.slice(0, limit)
 }
 
 function fuzzyMatch(value: string, normalizedQuery: string): FuzzyMatch | null {
@@ -218,7 +219,14 @@ function normalizeSearchValue(value: string): NormalizedValue {
 }
 
 function normalizeCharacter(character: string): string {
-    const normalizedCharacter = character
+    const specialCharacterMap: Record<string, string> = {
+        ł: 'l',
+        Ł: 'l',
+    }
+
+    const mappedCharacter = specialCharacterMap[character] ?? character
+
+    const normalizedCharacter = mappedCharacter
         .normalize('NFD')
         .replace(/\p{Diacritic}/gu, '')
         .toLowerCase()

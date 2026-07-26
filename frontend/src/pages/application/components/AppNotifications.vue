@@ -10,11 +10,11 @@
             @click="togglePanel"
         >
             <Bell :size="17" />
-
-            <span v-if="notifications.unreadCount" class="application-notifications-badge">
-                {{ formattedUnreadCount }}
-            </span>
         </AppButton>
+
+        <span v-if="notifications.unreadCount" class="application-notifications-badge">
+            {{ formattedUnreadCount }}
+        </span>
 
         <AppSidePanel v-model:opened="panelOpened" width="440px">
             <div class="application-notifications-panel">
@@ -298,26 +298,14 @@ function formatCreatedAt(createdAt: string): string {
 
 <style scoped>
 .application-notifications {
+    position: relative;
     display: flex;
 }
 
 .application-notifications-button {
-    position: relative;
     width: 32px;
     min-height: 32px;
     color: var(--color-text-muted);
-}
-
-.application-notifications-button :deep(.app-button-content) {
-    position: static;
-    width: 17px;
-    height: 17px;
-}
-
-.application-notifications-button :deep(.app-button-content > svg) {
-    display: block;
-    flex-shrink: 0;
-    color: currentColor;
 }
 
 .application-notifications-button:hover:not(:disabled),
@@ -328,6 +316,7 @@ function formatCreatedAt(createdAt: string): string {
 
 .application-notifications-badge {
     position: absolute;
+    z-index: 2;
     top: -3px;
     right: -5px;
     display: flex;
@@ -343,6 +332,7 @@ function formatCreatedAt(createdAt: string): string {
     font-size: 9px;
     font-weight: 700;
     line-height: 1;
+    pointer-events: none;
 }
 
 .application-notifications-panel {
